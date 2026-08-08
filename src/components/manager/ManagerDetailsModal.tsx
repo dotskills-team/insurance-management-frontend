@@ -22,6 +22,9 @@ import {
     LogIn,
     User,
     IdCard,
+    Cake,
+    VenusAndMars,
+    HeartHandshake,
 } from "lucide-react";
 import { IsActive, IUser } from "@/types/user.types";
 
@@ -73,6 +76,11 @@ const formatDate = (iso?: string | null, withTime = false) => {
         ? { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }
         : { day: "2-digit", month: "long", year: "numeric" };
     return new Date(iso).toLocaleDateString("en-GB", opts);
+};
+
+const formatGender = (gender?: string | null) => {
+    if (!gender) return null;
+    return gender.charAt(0) + gender.slice(1).toLowerCase();
 };
 
 const STATUS_CONFIG: Record<IsActive, { label: string; icon: React.ElementType; badge: string }> = {
@@ -141,6 +149,9 @@ export function ManagerDetailsModal({ open, onOpenChange, item }: Props) {
             ? item.createdBy.role
             : null;
 
+    const hasNominee = Boolean(item.nominee?.name || item.nominee?.phone);
+    const hasPersonalDetails = Boolean(item.nid || item.dateOfBirth || item.gender);
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             {/* <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0"> */}
@@ -149,7 +160,7 @@ export function ManagerDetailsModal({ open, onOpenChange, item }: Props) {
                 {/* Header */}
                 <div className="relative bg-linear-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 px-6 pt-8 pb-6 rounded-t-lg">
                     <DialogHeader className="sr-only">
-                        <DialogTitle>Manager Details</DialogTitle>
+                        <DialogTitle>A.M. Partnerships Details</DialogTitle>
                         <DialogDescription>Detailed information for {item.name}</DialogDescription>
                     </DialogHeader>
 
@@ -216,6 +227,21 @@ export function ManagerDetailsModal({ open, onOpenChange, item }: Props) {
 
                     <Separator />
 
+                    {/* Personal Details */}
+                    {hasPersonalDetails && (
+                        <>
+                            <div>
+                                <SectionTitle>Personal Details</SectionTitle>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <Field icon={IdCard} label="NID / Birth Cert. No." value={item.nid} mono />
+                                    <Field icon={Cake} label="Date of Birth" value={formatDate(item.dateOfBirth as any)} />
+                                    <Field icon={VenusAndMars} label="Gender" value={formatGender(item.gender)} />
+                                </div>
+                            </div>
+                            <Separator />
+                        </>
+                    )}
+
                     {/* Created By */}
                     <div>
                         <SectionTitle>Created By</SectionTitle>
@@ -251,6 +277,20 @@ export function ManagerDetailsModal({ open, onOpenChange, item }: Props) {
                                     <span className="font-semibold">Full Address:</span>{" "}
                                     {addressParts.join(", ")}
                                 </p>
+                            </div>
+                            <Separator />
+                        </>
+                    )}
+
+                    {/* Nominee */}
+                    {hasNominee && (
+                        <>
+                            <div>
+                                <SectionTitle>Nominee Information</SectionTitle>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <Field icon={HeartHandshake} label="Nominee Name" value={item.nominee?.name} />
+                                    <Field icon={Phone} label="Nominee Phone" value={item.nominee?.phone} mono />
+                                </div>
                             </div>
                             <Separator />
                         </>

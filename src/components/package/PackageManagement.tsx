@@ -156,7 +156,7 @@ function StatCard({
   const c = STAT_COLOR_MAP[color];
   return (
     <div
-      className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${c.gradient} p-5 shadow-lg ${c.shadow} transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5`}
+      className={`group relative overflow-hidden rounded-xl bg-linear-to-br ${c.gradient} p-5 shadow-lg ${c.shadow} transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5`}
     >
       <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-white/10 blur-xl transition-opacity duration-300 group-hover:opacity-80" />
 
@@ -341,7 +341,7 @@ export default function PackageManagement() {
           <ScrollArea className="w-full whitespace-nowrap">
             <Table className="min-w-[1100px]">
               <TableHeader className="sticky top-0 z-10">
-                <TableRow className="border-none bg-gradient-to-r *:text-white from-indigo-600 via-blue-600 to-cyan-600 hover:bg-transparent">
+                <TableRow className="border-none bg-linear-to-r *:text-white from-indigo-600 via-blue-600 to-cyan-600 hover:bg-transparent">
                 <SortableTh field="name" label="Package Name" />
                 <SortableTh field="coverageAmount" label="Coverage" />
                 <TableHead className="whitespace-nowrap">Plans</TableHead>
@@ -380,14 +380,13 @@ border-b
 transition-all
 duration-300
 hover:shadow-sm
-hover:scale-[1.002]
 hover:bg-indigo-50
 dark:hover:bg-indigo-950/20
 
 ${
   index % 2 === 0
     ? "bg-white dark:bg-background"
-    : "bg-gradient-to-r from-slate-50 to-indigo-50/40 dark:from-slate-950 dark:to-indigo-950/10"
+    : "bg-linear-to-r from-slate-50 to-indigo-50/40 dark:from-slate-950 dark:to-indigo-950/10"
 }
 `}>
                       {/* Name */}

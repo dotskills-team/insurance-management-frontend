@@ -164,7 +164,7 @@ const STAT_COLOR_MAP: Record<
   }
 > = {
   blue: {
-    card: "bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-700",
+    card: "bg-linear-to-br from-blue-600 via-blue-700 to-cyan-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-blue-100",
@@ -172,7 +172,7 @@ const STAT_COLOR_MAP: Record<
   },
 
   emerald: {
-    card: "bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-700",
+    card: "bg-linear-to-br from-emerald-600 via-emerald-700 to-teal-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-emerald-100",
@@ -180,7 +180,7 @@ const STAT_COLOR_MAP: Record<
   },
 
   slate: {
-    card: "bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900",
+    card: "bg-linear-to-br from-slate-700 via-slate-800 to-slate-900",
     iconBg: "bg-white/10",
     icon: "text-white",
     sub: "text-slate-200",
@@ -188,7 +188,7 @@ const STAT_COLOR_MAP: Record<
   },
 
   red: {
-    card: "bg-gradient-to-br from-rose-600 via-red-600 to-red-700",
+    card: "bg-linear-to-br from-rose-600 via-red-600 to-red-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-red-100",
@@ -591,8 +591,8 @@ export default function AgentManagement() {
               {leaderFilter === "all"
                 ? "All Leaders"
                 : (leadersData?.data ?? []).find(
-                    (l: IUser) => String(l._id) === leaderFilter,
-                  )?.name || "Select leader"}
+                  (l: IUser) => String(l._id) === leaderFilter,
+                )?.name || "Select leader"}
             </span>
           </SelectTrigger>
           <SelectContent>
@@ -708,15 +708,13 @@ border-b
 transition-all
 duration-300
 hover:shadow-sm
-hover:scale-[1.002]
 hover:bg-indigo-50
 dark:hover:bg-indigo-950/20
 
-${
-  index % 2 === 0
-    ? "bg-white dark:bg-background"
-    : "bg-linear-to-r from-slate-50 to-indigo-50/40 dark:from-slate-950 dark:to-indigo-950/10"
-}
+${index % 2 === 0
+                            ? "bg-white dark:bg-background"
+                            : "bg-linear-to-r from-slate-50 to-indigo-50/40 dark:from-slate-950 dark:to-indigo-950/10"
+                          }
 `}
                       >
                         {/* Agent name + phone */}

@@ -136,21 +136,21 @@ const STAT_COLOR_MAP: Record<
   }
 > = {
   violet: {
-    card: "bg-gradient-to-br from-violet-600 via-purple-600 to-violet-700",
+    card: "bg-linear-to-br from-violet-600 via-purple-600 to-violet-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-violet-100",
     glow: "hover:shadow-purple-500/30",
   },
   emerald: {
-    card: "bg-gradient-to-br from-emerald-600 via-green-600 to-green-700",
+    card: "bg-linear-to-br from-emerald-600 via-green-600 to-green-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-green-100",
     glow: "hover:shadow-green-500/30",
   },
   slate: {
-    card: "bg-gradient-to-br from-slate-600 via-cyan-600 to-cyan-700",
+    card: "bg-linear-to-br from-slate-600 via-cyan-600 to-cyan-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-cyan-100",
@@ -582,7 +582,7 @@ export default function BranchManagement() {
           <ScrollArea className="w-full whitespace-nowrap">
             <Table className="min-w-[1100px]">
               <TableHeader className="sticky top-0 z-10">
-                <TableRow className="border-none bg-gradient-to-r *:text-white from-indigo-600 via-blue-600 to-cyan-600 hover:bg-transparent">
+                <TableRow className="border-none bg-linear-to-r *:text-white from-indigo-600 via-blue-600 to-cyan-600 hover:bg-transparent">
                   <SortableTh field="branchName" label="Branch" />
                   <TableHead className="whitespace-nowrap">Partner</TableHead>
                   <SortableTh field="phone" label="Phone" />
@@ -636,14 +636,14 @@ border-b
 transition-all
 duration-300
 hover:shadow-sm
-hover:scale-[1.002]
+
 hover:bg-indigo-50
 dark:hover:bg-indigo-950/20
 
 ${
   index % 2 === 0
     ? "bg-white dark:bg-background"
-    : "bg-gradient-to-r from-slate-50 to-indigo-50/40 dark:from-slate-950 dark:to-indigo-950/10"
+    : "bg-linear-to-r from-slate-50 to-indigo-50/40 dark:from-slate-950 dark:to-indigo-950/10"
 }
 `}
                     >

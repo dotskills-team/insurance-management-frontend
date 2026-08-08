@@ -157,28 +157,28 @@ const STAT_COLOR_MAP: Record<
   }
 > = {
   blue: {
-    card: "bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-700",
+    card: "bg-linear-to-br from-blue-600 via-blue-700 to-cyan-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-blue-100",
     glow: "hover:shadow-blue-500/30",
   },
   emerald: {
-    card: "bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-700",
+    card: "bg-linear-to-br from-emerald-600 via-emerald-700 to-teal-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-emerald-100",
     glow: "hover:shadow-emerald-500/30",
   },
   slate: {
-    card: "bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900",
+    card: "bg-linear-to-br from-slate-700 via-slate-800 to-slate-900",
     iconBg: "bg-white/10",
     icon: "text-white",
     sub: "text-slate-200",
     glow: "hover:shadow-slate-500/30",
   },
   red: {
-    card: "bg-gradient-to-br from-rose-600 via-red-600 to-red-700",
+    card: "bg-linear-to-br from-rose-600 via-red-600 to-red-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-red-100",

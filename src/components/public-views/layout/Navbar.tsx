@@ -70,7 +70,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Menu */}
-        {/* <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => {
             const active = pathname === link.path;
 
@@ -91,7 +91,7 @@ export default function Navbar() {
               </Link>
             );
           })}
-        </nav> */}
+        </nav>
 
         {/* Desktop Button */}
         <div className="lg:flex items-center gap-3 hidden">
@@ -141,7 +141,7 @@ export default function Navbar() {
 
           <SheetContent side="right" className="w-80 px-0 pt-5">
             <div className="flex h-full flex-col">
-              {/* <nav className="flex flex-1 flex-col gap-1 px-4 pt-8">
+              <nav className="flex flex-1 flex-col gap-1 px-4 pt-8">
                 {navLinks.map((link) => {
                   const active = pathname === link.path;
 
@@ -159,7 +159,7 @@ export default function Navbar() {
                     </Link>
                   );
                 })}
-              </nav> */}
+              </nav>
 
               <div className="border-t px-4 py-5">
                 {user ? (

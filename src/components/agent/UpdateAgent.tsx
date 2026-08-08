@@ -35,6 +35,12 @@ import { divisions, getDistrictsByDivision, getUpazilasByDistrict } from "@/lib/
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
+const GENDER_OPTIONS = [
+  { value: "MALE", label: "Male" },
+  { value: "FEMALE", label: "Female" },
+  { value: "OTHER", label: "Other" },
+] as const;
+
 const updateAgentSchema = z
   .object({
     name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -59,6 +65,11 @@ const updateAgentSchema = z
     district: z.string().optional(),
     thana: z.string().optional(),
     street: z.string().optional(),
+    nid: z.string().optional(),
+    dateOfBirth: z.string().optional(),
+    gender: z.enum(["MALE", "FEMALE", "OTHER"]).optional(),
+    nomineeName: z.string().optional(),
+    nomineePhone: z.string().optional(),
     // ── Password change (optional) ──
     newPassword: z
       .string()
@@ -103,6 +114,16 @@ interface UpdateAgentModalProps {
   onSuccess?: () => void;
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+// Normalizes a Date / ISO string into the yyyy-MM-dd shape <input type="date"> expects
+const toDateInputValue = (value?: string | Date | null) => {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 10);
+};
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function UpdateAgentModal({
@@ -141,6 +162,7 @@ export function UpdateAgentModal({
 
   const selectedLeader = watch("agentLeader");
   const selectedStatus = watch("isActive");
+  const selectedGender = watch("gender");
 
   // ── Pre-fill form when modal opens ──
   useEffect(() => {
@@ -165,6 +187,11 @@ export function UpdateAgentModal({
         district: item.address?.district ?? "",
         thana: item.address?.thana ?? "",
         street: item.address?.street ?? "",
+        nid: item.nid ?? "",
+        dateOfBirth: toDateInputValue(item.dateOfBirth),
+        gender: item.gender,
+        nomineeName: item.nominee?.name ?? "",
+        nomineePhone: item.nominee?.phone ?? "",
         newPassword: "",
         confirmNewPassword: "",
       });
@@ -249,6 +276,8 @@ export function UpdateAgentModal({
   const onSubmit = async (data: UpdateAgentFormValues) => {
     try {
       const formData = new FormData();
+      const hasNominee = Boolean(data.nomineeName || data.nomineePhone);
+
       const payload: Record<string, any> = {
         name: data.name,
         phone: data.phone,
@@ -266,6 +295,15 @@ export function UpdateAgentModal({
           thana: data.thana || "",
           street: data.street || "",
         },
+        ...(data.nid && { nid: data.nid }),
+        ...(data.dateOfBirth && { dateOfBirth: data.dateOfBirth }),
+        ...(data.gender && { gender: data.gender }),
+        ...(hasNominee && {
+          nominee: {
+            ...(data.nomineeName && { name: data.nomineeName }),
+            ...(data.nomineePhone && { phone: data.nomineePhone }),
+          },
+        }),
       };
 
       // Only include password if provided
@@ -320,51 +358,6 @@ export function UpdateAgentModal({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-1">
 
           {/* ── Personal Information ── */}
-          {/* <div>
-            <p className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-3">
-              Personal Information
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-              <div className="space-y-1.5">
-                <Label htmlFor="ua-name" className="text-xs font-semibold tracking-widest uppercase">
-                  Full Name <span className="text-red-500">*</span>
-                </Label>
-                <Input id="ua-name" placeholder="e.g. Md. Rafiqul Islam" {...register("name")} />
-                {errors.name && (
-                  <p className="text-xs text-red-400">{errors.name.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="ua-phone" className="text-xs font-semibold tracking-widest uppercase">
-                  Phone Number <span className="text-red-500">*</span>
-                </Label>
-                <Input id="ua-phone" placeholder="01XXXXXXXXX" {...register("phone")} />
-                {errors.phone && (
-                  <p className="text-xs text-red-400">{errors.phone.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-1.5 sm:col-span-2">
-                <Label htmlFor="ua-email" className="text-xs font-semibold tracking-widest uppercase">
-                  Email{" "}
-                  <span className="text-[#96999A] normal-case font-normal">(optional)</span>
-                </Label>
-                <Input
-                  id="ua-email"
-                  type="email"
-                  placeholder="example@email.com"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p className="text-xs text-red-400">{errors.email.message}</p>
-                )}
-              </div>
-
-            </div>
-          </div> */}
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
             <div className="space-y-1.5">
@@ -415,6 +408,59 @@ export function UpdateAgentModal({
               />
               {errors.employeeId && (
                 <p className="text-xs text-red-400">{errors.employeeId.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="ua-nid" className="text-xs font-semibold tracking-widest uppercase">
+                NID / Birth Cert. No.{" "}
+                <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+              </Label>
+              <Input id="ua-nid" placeholder="e.g. 1990123456789" {...register("nid")} />
+              {errors.nid && <p className="text-xs text-red-400">{errors.nid.message}</p>}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="ua-dob" className="text-xs font-semibold tracking-widest uppercase">
+                Date of Birth{" "}
+                <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+              </Label>
+              <Input id="ua-dob" type="date" {...register("dateOfBirth")} />
+              {errors.dateOfBirth && (
+                <p className="text-xs text-red-400">{errors.dateOfBirth.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold tracking-widest uppercase">
+                Gender{" "}
+                <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+              </Label>
+              <Select
+                value={selectedGender ?? ""}
+                onValueChange={(v) =>
+                  setValue("gender", (v || undefined) as UpdateAgentFormValues["gender"], {
+                    shouldValidate: true,
+                  })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <span className="text-sm">
+                    {selectedGender
+                      ? GENDER_OPTIONS.find((g) => g.value === selectedGender)?.label
+                      : "Select Gender"}
+                  </span>
+                </SelectTrigger>
+                <SelectContent>
+                  {GENDER_OPTIONS.map((g) => (
+                    <SelectItem key={g.value} value={g.value}>
+                      {g.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.gender && (
+                <p className="text-xs text-red-400">{errors.gender.message}</p>
               )}
             </div>
 
@@ -632,6 +678,45 @@ export function UpdateAgentModal({
                   Street
                 </Label>
                 <Input id="ua-street" placeholder="e.g. Dhaka,1230" {...register("street")} />
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* ── Nominee Information ── */}
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-3">
+              Nominee Information{" "}
+              <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="ua-nominee-name" className="text-xs font-semibold tracking-widest uppercase">
+                  Nominee Name
+                </Label>
+                <Input
+                  id="ua-nominee-name"
+                  placeholder="e.g. Jane Doe"
+                  {...register("nomineeName")}
+                />
+                {errors.nomineeName && (
+                  <p className="text-xs text-red-400">{errors.nomineeName.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="ua-nominee-phone" className="text-xs font-semibold tracking-widest uppercase">
+                  Nominee Phone Number
+                </Label>
+                <Input
+                  id="ua-nominee-phone"
+                  placeholder="01XXXXXXXXX"
+                  {...register("nomineePhone")}
+                />
+                {errors.nomineePhone && (
+                  <p className="text-xs text-red-400">{errors.nomineePhone.message}</p>
+                )}
               </div>
             </div>
           </div>

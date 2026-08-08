@@ -208,7 +208,7 @@ const STAT_COLOR_MAP: Record<
   }
 > = {
   blue: {
-    card: "bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-700",
+    card: "bg-linear-to-br from-blue-600 via-blue-700 to-cyan-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-blue-100",
@@ -216,7 +216,7 @@ const STAT_COLOR_MAP: Record<
   },
 
   emerald: {
-    card: "bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-700",
+    card: "bg-linear-to-br from-emerald-600 via-emerald-700 to-teal-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-emerald-100",
@@ -224,7 +224,7 @@ const STAT_COLOR_MAP: Record<
   },
 
   slate: {
-    card: "bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900",
+    card: "bg-linear-to-br from-slate-700 via-slate-800 to-slate-900",
     iconBg: "bg-white/10",
     icon: "text-white",
     sub: "text-slate-200",
@@ -232,21 +232,21 @@ const STAT_COLOR_MAP: Record<
   },
 
   red: {
-    card: "bg-gradient-to-br from-rose-600 via-red-600 to-red-700",
+    card: "bg-linear-to-br from-rose-600 via-red-600 to-red-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-red-100",
     glow: "hover:shadow-red-500/30",
   },
   amber: {
-    card: "bg-gradient-to-br from-amber-600 via-orange-600 to-orange-700",
+    card: "bg-linear-to-br from-amber-600 via-orange-600 to-orange-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-orange-100",
     glow: "hover:shadow-orange-500/30",
   },
   violet: {
-    card: "bg-gradient-to-br from-violet-600 via-purple-600 to-purple-700",
+    card: "bg-linear-to-br from-violet-600 via-purple-600 to-purple-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-purple-100",
@@ -762,7 +762,6 @@ border-b
 transition-all
 duration-300
 hover:shadow-sm
-hover:scale-[1.002]
 hover:bg-indigo-50
 dark:hover:bg-indigo-950/20
 

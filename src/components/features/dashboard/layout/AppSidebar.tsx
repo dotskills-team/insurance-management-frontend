@@ -62,58 +62,6 @@ function getActiveHref(
   return best;
 }
 
-// function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
-//   const { state, isMobile } = useSidebar();
-//   const isCollapsed = state === "collapsed" && !isMobile;
-//   const Icon = item.icon;
-
-//   return (
-//     <SidebarMenuItem>
-//       <SidebarMenuButton
-//         isActive={isActive}
-//         tooltip={isCollapsed ? item.label : undefined}
-//         className={cn(
-//           "group/nav relative h-10 gap-3 mb-2 rounded-xl px-2.5 text-lg font-semibold",
-//           "transition-all duration-200 ease-out",
-//           isActive
-//             ? cn(
-//               "bg-linear-to-r from-indigo-500 to-blue-600 *:text-white font-bold shadow-md shadow-indigo-900/20",
-//               "hover:from-indigo-600 hover:to-blue-700 hover:text-white",
-//             )
-//             : cn(
-//               "text-gray-600 hover:bg-blue-600 hover:text-white hover:shadow-sm",
-//               "dark:text-gray-400 dark:hover:bg-blue-600 dark:hover:text-gray-100",
-//             ),
-//         )}
-//       >
-//         <Link
-//           href={item.href}
-//           className={cn(
-//             "flex w-full items-center gap-3",
-//             "group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0",
-//           )}
-//         >
-//           {/* fixed-size icon box: icon never shifts between collapsed/expanded */}
-//           <span className="flex h-5 w-5 shrink-0 items-center justify-center">
-//             <Icon
-//               className={cn(
-//                 "h-4.5 w-4.5 shrink-0 transition-transform duration-200 group-hover/nav:scale-110",
-//                 isActive
-//                   ? "text-white"
-//                   : "text-gray-600 group-hover/nav:text-current",
-//               )}
-//             />
-//           </span>
-
-//           <span className="truncate group-data-[collapsible=icon]:hidden">
-//             {item.label}
-//           </span>
-//         </Link>
-//       </SidebarMenuButton>
-//     </SidebarMenuItem>
-//   );
-// }
-
 function NavItemRow({ item, isActive }: { item: NavItem; isActive: boolean }) {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed" && !isMobile;

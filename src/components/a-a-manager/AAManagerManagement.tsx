@@ -60,9 +60,9 @@ import Link from "next/link";
 
 import { useUser } from "@/context/UserContext";
 import { CreateAAManagerModal } from "./CreateAAManager";
-import { UpdateManagerModal } from "./UpdateAAManager";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { AAManagerDetailsModal } from "./AAManagerDetailsModal";
+import { UpdateAAManagerModal } from "./UpdateAAManager";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -171,7 +171,7 @@ const STAT_COLOR_MAP: Record<
   }
 > = {
   blue: {
-    card: "bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-700",
+    card: "bg-linear-to-br from-blue-600 via-blue-700 to-cyan-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-blue-100",
@@ -179,7 +179,7 @@ const STAT_COLOR_MAP: Record<
   },
 
   emerald: {
-    card: "bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-700",
+    card: "bg-linear-to-br from-emerald-600 via-emerald-700 to-teal-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-emerald-100",
@@ -187,7 +187,7 @@ const STAT_COLOR_MAP: Record<
   },
 
   slate: {
-    card: "bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900",
+    card: "bg-linear-to-br from-slate-700 via-slate-800 to-slate-900",
     iconBg: "bg-white/10",
     icon: "text-white",
     sub: "text-slate-200",
@@ -195,7 +195,7 @@ const STAT_COLOR_MAP: Record<
   },
 
   red: {
-    card: "bg-gradient-to-br from-rose-600 via-red-600 to-red-700",
+    card: "bg-linear-to-br from-rose-600 via-red-600 to-red-700",
     iconBg: "bg-white/15",
     icon: "text-white",
     sub: "text-red-100",
@@ -661,7 +661,6 @@ border-b
 transition-all
 duration-300
 hover:shadow-sm
-hover:scale-[1.002]
 hover:bg-indigo-50
 dark:hover:bg-indigo-950/20
 
@@ -811,7 +810,7 @@ ${index % 2 === 0
 
       {/* ── Modals ── */}
       {editingManager && (
-        <UpdateManagerModal
+        <UpdateAAManagerModal
           open={isUpdateOpen}
           onOpenChange={setIsUpdateOpen}
           item={editingManager}

@@ -169,8 +169,8 @@ const STAT_COLOR_MAP: Record<
   }
 > = {
   blue: {
-    bg: "bg-gradient-to-br from-blue-950 to-blue-900",
-    iconBg: "bg-gradient-to-br from-blue-500 to-blue-600",
+    bg: "bg-linear-to-br from-blue-950 to-blue-900",
+    iconBg: "bg-linear-to-br from-blue-500 to-blue-600",
     icon: "text-white",
     text: "text-blue-50",
     border: "hover:border-blue-800",
@@ -178,8 +178,8 @@ const STAT_COLOR_MAP: Record<
   },
 
   emerald: {
-    bg: "bg-gradient-to-br from-emerald-950 to-emerald-900",
-    iconBg: "bg-gradient-to-br from-emerald-500 to-emerald-600",
+    bg: "bg-linear-to-br from-emerald-950 to-emerald-900",
+    iconBg: "bg-linear-to-br from-emerald-500 to-emerald-600",
     icon: "text-white",
     text: "text-emerald-100",
     border: "hover:border-emerald-800",
@@ -187,8 +187,8 @@ const STAT_COLOR_MAP: Record<
   },
 
   slate: {
-    bg: "bg-gradient-to-br from-slate-950 to-slate-900",
-    iconBg: "bg-gradient-to-br from-slate-500 to-slate-700",
+    bg: "bg-linear-to-br from-slate-950 to-slate-900",
+    iconBg: "bg-linear-to-br from-slate-500 to-slate-700",
     icon: "text-white",
     text: "text-slate-100",
     border: "hover:border-slate-700",
@@ -196,8 +196,8 @@ const STAT_COLOR_MAP: Record<
   },
 
   red: {
-    bg: "bg-gradient-to-br from-rose-950 to-red-900",
-    iconBg: "bg-gradient-to-br from-rose-500 to-red-600",
+    bg: "bg-linear-to-br from-rose-950 to-red-900",
+    iconBg: "bg-linear-to-br from-rose-500 to-red-600",
     icon: "text-white",
     text: "text-rose-100",
     border: "hover:border-rose-800",
@@ -749,7 +749,6 @@ export default function AgentLeaderCustomerManagement() {
                           transition-all
                           duration-300
                           hover:shadow-sm
-                          hover:scale-[1.002]
                           hover:bg-indigo-50
                           dark:hover:bg-indigo-950/20
 

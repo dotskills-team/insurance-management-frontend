@@ -30,8 +30,6 @@ export interface IAddress {
 
 export interface INominee {
   name?: string;
-  age?: number;
-  relationship?: string;
   phone?: string;
 }
 

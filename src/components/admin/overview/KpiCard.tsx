@@ -18,7 +18,7 @@ export function KpiCard({
 }: KpiCardProps) {
 const COLORS = {
   emerald: {
-    bg: "bg-gradient-to-br from-emerald-950 via-green-950 to-emerald-900",
+    bg: "bg-linear-to-br from-emerald-950 via-green-950 to-emerald-900",
     icon: "bg-emerald-500 text-white",
     value: "text-emerald-100",
     border: "hover:border-emerald-800",
@@ -27,7 +27,7 @@ const COLORS = {
   },
 
   blue: {
-    bg: "bg-gradient-to-br from-blue-950 via-indigo-950 to-blue-900",
+    bg: "bg-linear-to-br from-blue-950 via-indigo-950 to-blue-900",
     icon: "bg-blue-500 text-white",
     value: "text-blue-100",
     border: "hover:border-blue-800",
@@ -36,7 +36,7 @@ const COLORS = {
   },
 
   violet: {
-    bg: "bg-gradient-to-br from-violet-950 via-purple-950 to-violet-900",
+    bg: "bg-linear-to-br from-violet-950 via-purple-950 to-violet-900",
     icon: "bg-violet-500 text-white",
     value: "text-violet-100",
     border: "hover:border-violet-800",
@@ -45,7 +45,7 @@ const COLORS = {
   },
 
   amber: {
-    bg: "bg-gradient-to-br from-amber-950 via-yellow-950 to-amber-900",
+    bg: "bg-linear-to-br from-amber-950 via-yellow-950 to-amber-900",
     icon: "bg-amber-500 text-white",
     value: "text-amber-100",
     border: "hover:border-amber-800",
@@ -54,7 +54,7 @@ const COLORS = {
   },
 
   cyan: {
-    bg: "bg-gradient-to-br from-cyan-950 via-slate-950 to-cyan-900",
+    bg: "bg-linear-to-br from-cyan-950 via-slate-950 to-cyan-900",
     icon: "bg-cyan-500 text-white",
     value: "text-cyan-100",
     border: "hover:border-cyan-800",
@@ -63,7 +63,7 @@ const COLORS = {
   },
 
   rose: {
-    bg: "bg-gradient-to-br from-rose-950 via-red-950 to-rose-900",
+    bg: "bg-linear-to-br from-rose-950 via-red-950 to-rose-900",
     icon: "bg-rose-500 text-white",
     value: "text-rose-100",
     border: "hover:border-rose-800",

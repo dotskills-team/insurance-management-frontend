@@ -14,25 +14,25 @@ interface StatusChipProps {
 
 const TONE_STYLES = {
   success: {
-    card: "bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/40 dark:to-emerald-900/20 border-emerald-200 dark:border-emerald-800",
+    card: "bg-linear-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/40 dark:to-emerald-900/20 border-emerald-200 dark:border-emerald-800",
     icon: "bg-emerald-500 text-white",
     value: "text-emerald-700 dark:text-emerald-400",
   },
 
   warning: {
-    card: "bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/40 dark:to-amber-900/20 border-amber-200 dark:border-amber-800",
+    card: "bg-linear-to-br from-amber-50 to-amber-100 dark:from-amber-950/40 dark:to-amber-900/20 border-amber-200 dark:border-amber-800",
     icon: "bg-amber-500 text-white",
     value: "text-amber-700 dark:text-amber-400",
   },
 
   muted: {
-    card: "bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border-slate-200 dark:border-slate-700",
+    card: "bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border-slate-200 dark:border-slate-700",
     icon: "bg-slate-500 text-white",
     value: "text-slate-700 dark:text-slate-300",
   },
 
   danger: {
-    card: "bg-gradient-to-br from-rose-50 to-red-100 dark:from-rose-950/40 dark:to-red-900/20 border-rose-200 dark:border-rose-800",
+    card: "bg-linear-to-br from-rose-50 to-red-100 dark:from-rose-950/40 dark:to-red-900/20 border-rose-200 dark:border-rose-800",
     icon: "bg-rose-500 text-white",
     value: "text-rose-700 dark:text-rose-400",
   },

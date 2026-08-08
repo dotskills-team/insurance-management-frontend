@@ -32,6 +32,12 @@ import { divisions, getDistrictsByDivision, getUpazilasByDistrict } from "@/lib/
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
 
+const GENDER_OPTIONS = [
+  { value: "MALE", label: "Male" },
+  { value: "FEMALE", label: "Female" },
+  { value: "OTHER", label: "Other" },
+] as const;
+
 const schema = z
   .object({
     name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -46,6 +52,11 @@ const schema = z
     district: z.string().optional(),
     thana: z.string().optional(),
     street: z.string().optional(),
+    nid: z.string().optional(),
+    dateOfBirth: z.string().optional(),
+    gender: z.enum(["MALE", "FEMALE", "OTHER"]).optional(),
+    nomineeName: z.string().optional(),
+    nomineePhone: z.string().optional(),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
@@ -83,6 +94,7 @@ export function CreateManagerModal({ onSuccess }: Props) {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
     reset,
   } = useForm<FormValues>({
@@ -96,10 +108,17 @@ export function CreateManagerModal({ onSuccess }: Props) {
       district: "",
       thana: "",
       street: "",
+      nid: "",
+      dateOfBirth: "",
+      gender: undefined,
+      nomineeName: "",
+      nomineePhone: "",
       password: "",
       confirmPassword: "",
     },
   });
+
+  const selectedGender = watch("gender");
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -160,6 +179,8 @@ export function CreateManagerModal({ onSuccess }: Props) {
   const onSubmit = async (data: FormValues) => {
     try {
       const formData = new FormData();
+      const hasNominee = Boolean(data.nomineeName || data.nomineePhone);
+
       const payload = {
         name: data.name,
         phone: data.phone,
@@ -173,6 +194,15 @@ export function CreateManagerModal({ onSuccess }: Props) {
           thana: data.thana || "",
           street: data.street || "",
         },
+        ...(data.nid && { nid: data.nid }),
+        ...(data.dateOfBirth && { dateOfBirth: data.dateOfBirth }),
+        ...(data.gender && { gender: data.gender }),
+        ...(hasNominee && {
+          nominee: {
+            ...(data.nomineeName && { name: data.nomineeName }),
+            ...(data.nomineePhone && { phone: data.nomineePhone }),
+          },
+        }),
       };
       formData.append("data", JSON.stringify(payload));
       if (imageFile) formData.append("picture", imageFile);
@@ -293,6 +323,61 @@ export function CreateManagerModal({ onSuccess }: Props) {
                 </div>
 
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="mg-nid" className="text-xs font-semibold tracking-widest uppercase">
+                    NID / Birth Cert. No.{" "}
+                    <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+                  </Label>
+                  <Input id="mg-nid" placeholder="e.g. 1990123456789" {...register("nid")} />
+                  {errors.nid && <p className="text-xs text-red-400">{errors.nid.message}</p>}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="mg-dob" className="text-xs font-semibold tracking-widest uppercase">
+                    Date of Birth{" "}
+                    <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+                  </Label>
+                  <Input id="mg-dob" type="date" {...register("dateOfBirth")} />
+                  {errors.dateOfBirth && (
+                    <p className="text-xs text-red-400">{errors.dateOfBirth.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold tracking-widest uppercase">
+                    Gender{" "}
+                    <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+                  </Label>
+                  <Select
+                    value={selectedGender ?? ""}
+                    onValueChange={(v) =>
+                      setValue("gender", (v || undefined) as FormValues["gender"], {
+                        shouldValidate: true,
+                      })
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <span className="text-sm">
+                        {selectedGender
+                          ? GENDER_OPTIONS.find((g) => g.value === selectedGender)?.label
+                          : "Select Gender"}
+                      </span>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GENDER_OPTIONS.map((g) => (
+                        <SelectItem key={g.value} value={g.value}>
+                          {g.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.gender && (
+                    <p className="text-xs text-red-400">{errors.gender.message}</p>
+                  )}
+                </div>
+              </div>
             </div>
 
             <Separator />
@@ -376,6 +461,45 @@ export function CreateManagerModal({ onSuccess }: Props) {
                     placeholder="e.g. Ward-10"
                     {...register("street")}
                   />
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Nominee Information */}
+            <div>
+              <p className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-3">
+                Nominee Information{" "}
+                <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="mg-nominee-name" className="text-xs font-semibold tracking-widest uppercase">
+                    Nominee Name
+                  </Label>
+                  <Input
+                    id="mg-nominee-name"
+                    placeholder="e.g. Jane Doe"
+                    {...register("nomineeName")}
+                  />
+                  {errors.nomineeName && (
+                    <p className="text-xs text-red-400">{errors.nomineeName.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label htmlFor="mg-nominee-phone" className="text-xs font-semibold tracking-widest uppercase">
+                    Nominee Phone Number
+                  </Label>
+                  <Input
+                    id="mg-nominee-phone"
+                    placeholder="01XXXXXXXXX"
+                    {...register("nomineePhone")}
+                  />
+                  {errors.nomineePhone && (
+                    <p className="text-xs text-red-400">{errors.nomineePhone.message}</p>
+                  )}
                 </div>
               </div>
             </div>

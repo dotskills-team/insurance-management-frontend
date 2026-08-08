@@ -144,11 +144,6 @@ export function CustomerDetailsModal({
     address?.division,
   ].filter(Boolean);
 
-  const nominee = item.nominee;
-  const hasNominee = nominee && (
-    nominee.name || nominee.phone || nominee.relationship || nominee.age
-  );
-
   const agentName =
     !item.createdBy
       ? null
@@ -287,22 +282,6 @@ export function CustomerDetailsModal({
           </div>
 
           <Separator />
-
-          {/* Nominee */}
-          {hasNominee && (
-            <>
-              <div>
-                <SectionTitle>Nominee Information</SectionTitle>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Field icon={Heart}  label="Nominee Name"     value={nominee?.name} />
-                  <Field icon={Heart}  label="Relationship"     value={nominee?.relationship} />
-                  <Field icon={Phone}  label="Nominee Phone"    value={nominee?.phone} mono />
-                  <Field icon={User}   label="Nominee Age"      value={nominee?.age} />
-                </div>
-              </div>
-              <Separator />
-            </>
-          )}
 
           {/* Address */}
           {addressParts.length > 0 && (

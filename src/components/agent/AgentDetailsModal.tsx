@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -24,6 +25,9 @@ import {
   Users,
   LogIn,
   IdCard,
+  Cake,
+  VenusAndMars,
+  HeartHandshake,
 } from "lucide-react";
 import { IsActive, IUser } from "@/types/user.types";
 
@@ -77,6 +81,11 @@ const formatDate = (iso?: string | null, withTime = false) => {
     ? { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }
     : { day: "2-digit", month: "long", year: "numeric" };
   return new Date(iso).toLocaleDateString("en-GB", opts);
+};
+
+const formatGender = (gender?: string | null) => {
+  if (!gender) return null;
+  return gender.charAt(0) + gender.slice(1).toLowerCase();
 };
 
 // Status config
@@ -169,9 +178,12 @@ export function AgentDetailsModal({
       ? item.createdBy.role
       : null;
 
+  const hasNominee = Boolean(item.nominee?.name || item.nominee?.phone);
+  const hasPersonalDetails = Boolean(item.nid || item.dateOfBirth || item.gender);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] scrollbar-none overflow-y-auto p-0">
 
         {/* ── Header ── */}
         <div className="relative bg-linear-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 px-6 pt-8 pb-6 rounded-t-lg">
@@ -245,6 +257,21 @@ export function AgentDetailsModal({
 
           <Separator />
 
+          {/* Personal Details */}
+          {hasPersonalDetails && (
+            <>
+              <div>
+                <SectionTitle>Personal Details</SectionTitle>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field icon={IdCard} label="NID / Birth Cert. No." value={item.nid} mono />
+                  <Field icon={Cake} label="Date of Birth" value={formatDate(item.dateOfBirth as any)} />
+                  <Field icon={VenusAndMars} label="Gender" value={formatGender(item.gender)} />
+                </div>
+              </div>
+              <Separator />
+            </>
+          )}
+
           {/* Assignment */}
           <div>
             <SectionTitle>Assignment</SectionTitle>
@@ -317,6 +344,20 @@ export function AgentDetailsModal({
                   <span className="font-semibold">Full Address:</span>{" "}
                   {addressParts.join(", ")}
                 </p>
+              </div>
+              <Separator />
+            </>
+          )}
+
+          {/* Nominee */}
+          {hasNominee && (
+            <>
+              <div>
+                <SectionTitle>Nominee Information</SectionTitle>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Field icon={HeartHandshake} label="Nominee Name" value={item.nominee?.name} />
+                  <Field icon={Phone} label="Nominee Phone" value={item.nominee?.phone} mono />
+                </div>
               </div>
               <Separator />
             </>

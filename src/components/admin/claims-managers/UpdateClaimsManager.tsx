@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/incompatible-library */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -7,7 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { ShieldCheck, Upload, X, Eye, EyeOff } from "lucide-react";
+import { Crown, Upload, X, Eye, EyeOff } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,12 +28,15 @@ import {
 import { useUpdateUserMutation } from "@/redux/features/user/user.api";
 import { IsActive, IUser } from "@/types/user.types";
 
-import {
-  divisions,
-  getDistrictsByDivision,
-  getUpazilasByDistrict,
-} from "@/lib/bd-address";
-import Image from "next/image";
+import { divisions, getDistrictsByDivision, getUpazilasByDistrict } from "@/lib/bd-address";
+
+// ─── Schema ───────────────────────────────────────────────────────────────────
+
+const GENDER_OPTIONS = [
+  { value: "MALE", label: "Male" },
+  { value: "FEMALE", label: "Female" },
+  { value: "OTHER", label: "Other" },
+] as const;
 
 const schema = z
   .object({
@@ -47,10 +49,23 @@ const schema = z
       .or(z.literal("")),
     employeeId: z.string().optional(),
     isActive: z.nativeEnum(IsActive),
+    salary: z.preprocess(
+      (val) => (val !== "" && val !== undefined ? Number(val) : undefined),
+      z.number().min(0).optional(),
+    ),
+    salaryPerCustomer: z.preprocess(
+      (val) => (val !== "" && val !== undefined ? Number(val) : undefined),
+      z.number().min(0).optional(),
+    ),
     division: z.string().optional(),
     district: z.string().optional(),
     thana: z.string().optional(),
     street: z.string().optional(),
+    nid: z.string().optional(),
+    dateOfBirth: z.string().optional(),
+    gender: z.enum(["MALE", "FEMALE", "OTHER"]).optional(),
+    nomineeName: z.string().optional(),
+    nomineePhone: z.string().optional(),
     // ── Password change (optional) ──
     newPassword: z
       .string()
@@ -95,30 +110,32 @@ const STATUS_META: Record<IsActive, { label: string; dot: string }> = {
   [IsActive.ALL]: { label: "All", dot: "bg-slate-400" },
 };
 
-export function UpdateClaimsManagerModal({
-  open,
-  onOpenChange,
-  item,
-  onSuccess,
-}: Props) {
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+// Normalizes a Date / ISO string into the yyyy-MM-dd shape <input type="date"> expects
+const toDateInputValue = (value?: string | Date | null) => {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 10);
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export function UpdateClaimsManagerModal({ open, onOpenChange, item, onSuccess }: Props) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // ── division / district / thana cascading selection ──
+  // ── division / district / thana cascading selection (ids drive the Selects,
+  // the actual name strings are what get saved into the form / payload) ──
   const [divisionId, setDivisionId] = useState("");
   const [districtId, setDistrictId] = useState("");
   const [thanaId, setThanaId] = useState("");
 
-  const availableDistricts = useMemo(
-    () => getDistrictsByDivision(divisionId),
-    [divisionId],
-  );
-  const availableUpazilas = useMemo(
-    () => getUpazilasByDistrict(districtId),
-    [districtId],
-  );
+  const availableDistricts = useMemo(() => getDistrictsByDivision(divisionId), [divisionId]);
+  const availableUpazilas = useMemo(() => getUpazilasByDistrict(districtId), [districtId]);
 
   const [updateUser, { isLoading }] = useUpdateUserMutation();
 
@@ -130,10 +147,12 @@ export function UpdateClaimsManagerModal({
     formState: { errors },
     reset,
   } = useForm<FormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(schema) as any,
   });
 
   const selectedStatus = watch("isActive");
+  const selectedGender = watch("gender");
 
   useEffect(() => {
     if (open && item) {
@@ -143,10 +162,17 @@ export function UpdateClaimsManagerModal({
         email: item.email ?? "",
         employeeId: item.employeeId ?? "",
         isActive: item.isActive ?? IsActive.ACTIVE,
+        salary: item.salary ? Number(item.salary) : undefined,
+        salaryPerCustomer: item.salaryPerCustomer ? Number(item.salaryPerCustomer) : undefined,
         division: item.address?.division ?? "",
         district: item.address?.district ?? "",
         thana: item.address?.thana ?? "",
         street: item.address?.street ?? "",
+        nid: item.nid ?? "",
+        dateOfBirth: toDateInputValue(item.dateOfBirth),
+        gender: item.gender,
+        nomineeName: item.nominee?.name ?? "",
+        nomineePhone: item.nominee?.phone ?? "",
         newPassword: "",
         confirmNewPassword: "",
       });
@@ -155,21 +181,17 @@ export function UpdateClaimsManagerModal({
       setShowNewPassword(false);
       setShowConfirmPassword(false);
 
-      const divisionMatch = divisions.find(
-        (d) => d.name === item.address?.division,
-      );
+      // ── resolve existing address names back into ids so the cascading
+      // Selects show the current value automatically ──
+      const divisionMatch = divisions.find((d) => d.name === item.address?.division);
       const initialDivisionId = divisionMatch?.id ?? "";
 
       const districtsForDivision = getDistrictsByDivision(initialDivisionId);
-      const districtMatch = districtsForDivision.find(
-        (d) => d.name === item.address?.district,
-      );
+      const districtMatch = districtsForDivision.find((d) => d.name === item.address?.district);
       const initialDistrictId = districtMatch?.id ?? "";
 
       const upazilasForDistrict = getUpazilasByDistrict(initialDistrictId);
-      const thanaMatch = upazilasForDistrict.find(
-        (u) => u.name === item.address?.thana,
-      );
+      const thanaMatch = upazilasForDistrict.find((u) => u.name === item.address?.thana);
       const initialThanaId = thanaMatch?.id ?? "";
 
       setDivisionId(initialDivisionId);
@@ -181,20 +203,16 @@ export function UpdateClaimsManagerModal({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Image must be under 2MB");
-      return;
-    }
+    if (file.size > 2 * 1024 * 1024) { toast.error("Image must be under 2MB"); return; }
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
   };
 
-  const clearImage = () => {
-    setImageFile(null);
-    setImagePreview(null);
-  };
+  const clearImage = () => { setImageFile(null); setImagePreview(null); };
 
   // ── cascading address handlers ──
+  // NOTE: shadcn's Select onValueChange can fire with `null` (e.g. on clear),
+  // so these accept `string | null` and normalize to "".
   const handleDivisionChange = (id: string | null) => {
     const value = id ?? "";
     const division = divisions.find((d) => d.id === value);
@@ -233,18 +251,31 @@ export function UpdateClaimsManagerModal({
   const onSubmit = async (data: FormValues) => {
     try {
       const formData = new FormData();
+      const hasNominee = Boolean(data.nomineeName || data.nomineePhone);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: Record<string, any> = {
         name: data.name,
         phone: data.phone,
         ...(data.email && { email: data.email }),
         ...(data.employeeId && { employeeId: data.employeeId }),
         isActive: data.isActive,
+        ...(data.salary !== undefined && { salary: String(data.salary) }),
+        ...(data.salaryPerCustomer !== undefined && { salaryPerCustomer: String(data.salaryPerCustomer) }),
         address: {
           division: data.division || "",
           district: data.district || "",
           thana: data.thana || "",
           street: data.street || "",
         },
+        ...(data.nid && { nid: data.nid }),
+        ...(data.dateOfBirth && { dateOfBirth: data.dateOfBirth }),
+        ...(data.gender && { gender: data.gender }),
+        ...(hasNominee && {
+          nominee: {
+            ...(data.nomineeName && { name: data.nomineeName }),
+            ...(data.nomineePhone && { phone: data.nomineePhone }),
+          },
+        }),
       };
       if (data.newPassword && data.newPassword.trim().length > 0) {
         payload.password = data.newPassword;
@@ -256,87 +287,61 @@ export function UpdateClaimsManagerModal({
       toast.success("Claims Manager updated successfully!");
       handleClose();
       onSuccess?.();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to update Claims Manager");
+      toast.error(error?.data?.message || "Failed to update claims manager");
     }
   };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(val) => {
-        if (!val) handleClose();
-        else onOpenChange(true);
-      }}
-    >
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-none p-6">
+    <Dialog open={open} onOpenChange={(val) => { if (!val) handleClose(); else onOpenChange(true); }}>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-6">
         <DialogHeader className="flex flex-col items-center gap-2 pb-2">
           <div className="w-12 h-12 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md mb-1">
-            <ShieldCheck className="w-6 h-6 text-white" />
+            <Crown className="w-6 h-6 text-white" />
           </div>
           <DialogTitle className="text-xl font-bold tracking-widest uppercase">
             Edit Claims Manager
           </DialogTitle>
           <DialogDescription className="text-[#96999A] text-sm tracking-wide">
-            Update the Claims Manager&apos;s information below
+            Update the claims manager&apos;s information below
           </DialogDescription>
         </DialogHeader>
 
         <Separator />
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-1">
+
           {/* Personal Information */}
           <div>
             <p className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-3">
               Personal Information
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="ucm-name"
-                  className="text-xs font-semibold tracking-widest uppercase"
-                >
+                <Label htmlFor="ual-name" className="text-xs font-semibold tracking-widest uppercase">
                   Full Name <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="ucm-name"
-                  placeholder="e.g. Md. Karimul Islam"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p className="text-xs text-red-400">{errors.name.message}</p>
-                )}
+                <Input id="ual-name" placeholder="e.g. Md. Karimul Islam" {...register("name")} />
+                {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
               </div>
 
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="ucm-phone"
-                  className="text-xs font-semibold tracking-widest uppercase"
-                >
+                <Label htmlFor="ual-phone" className="text-xs font-semibold tracking-widest uppercase">
                   Phone Number <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="ucm-phone"
-                  placeholder="01XXXXXXXXX"
-                  {...register("phone")}
-                />
-                {errors.phone && (
-                  <p className="text-xs text-red-400">{errors.phone.message}</p>
-                )}
+                <Input id="ual-phone" placeholder="01XXXXXXXXX" {...register("phone")} />
+                {errors.phone && <p className="text-xs text-red-400">{errors.phone.message}</p>}
               </div>
 
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="ucm-email"
-                  className="text-xs font-semibold tracking-widest uppercase"
-                >
+                <Label htmlFor="ua-email" className="text-xs font-semibold tracking-widest uppercase">
                   Email{" "}
-                  <span className="text-[#96999A] normal-case font-normal">
-                    (optional)
-                  </span>
+                  <span className="text-[#96999A] normal-case font-normal">(optional)</span>
                 </Label>
                 <Input
-                  id="ucm-email"
+                  id="ua-email"
                   type="email"
                   placeholder="example@email.com"
                   {...register("email")}
@@ -347,26 +352,73 @@ export function UpdateClaimsManagerModal({
               </div>
 
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="ucm-employee-id"
-                  className="text-xs font-semibold tracking-widest uppercase"
-                >
+                <Label htmlFor="ua-employee-id" className="text-xs font-semibold tracking-widest uppercase">
                   Employee ID{" "}
-                  <span className="text-[#96999A] normal-case font-normal">
-                    (optional)
-                  </span>
+                  <span className="text-[#96999A] normal-case font-normal">(optional)</span>
                 </Label>
                 <Input
-                  id="ucm-employee-id"
+                  id="ua-employee-id"
                   placeholder="e.g. EMP-1024"
                   {...register("employeeId")}
                 />
                 {errors.employeeId && (
-                  <p className="text-xs text-red-400">
-                    {errors.employeeId.message}
-                  </p>
+                  <p className="text-xs text-red-400">{errors.employeeId.message}</p>
                 )}
               </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="ual-nid" className="text-xs font-semibold tracking-widest uppercase">
+                  NID / Birth Cert. No.{" "}
+                  <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+                </Label>
+                <Input id="ual-nid" placeholder="e.g. 1990123456789" {...register("nid")} />
+                {errors.nid && <p className="text-xs text-red-400">{errors.nid.message}</p>}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="ual-dob" className="text-xs font-semibold tracking-widest uppercase">
+                  Date of Birth{" "}
+                  <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+                </Label>
+                <Input id="ual-dob" type="date" {...register("dateOfBirth")} />
+                {errors.dateOfBirth && (
+                  <p className="text-xs text-red-400">{errors.dateOfBirth.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold tracking-widest uppercase">
+                  Gender{" "}
+                  <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+                </Label>
+                <Select
+                  value={selectedGender ?? ""}
+                  onValueChange={(v) =>
+                    setValue("gender", (v || undefined) as FormValues["gender"], {
+                      shouldValidate: true,
+                    })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <span className="text-sm">
+                      {selectedGender
+                        ? GENDER_OPTIONS.find((g) => g.value === selectedGender)?.label
+                        : "Select Gender"}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GENDER_OPTIONS.map((g) => (
+                      <SelectItem key={g.value} value={g.value}>
+                        {g.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.gender && (
+                  <p className="text-xs text-red-400">{errors.gender.message}</p>
+                )}
+              </div>
+
             </div>
           </div>
 
@@ -383,42 +435,59 @@ export function UpdateClaimsManagerModal({
               </Label>
               <Select
                 value={selectedStatus}
-                onValueChange={(v) =>
-                  setValue("isActive", v as IsActive, { shouldValidate: true })
-                }
+                onValueChange={(v) => setValue("isActive", v as IsActive, { shouldValidate: true })}
               >
                 <SelectTrigger className="w-full">
                   {selectedStatus ? (
                     <span className="flex items-center gap-2 text-sm">
-                      <span
-                        className={`h-2 w-2 rounded-full inline-block ${STATUS_META[selectedStatus]?.dot}`}
-                      />
+                      <span className={`h-2 w-2 rounded-full inline-block ${STATUS_META[selectedStatus]?.dot}`} />
                       {STATUS_META[selectedStatus]?.label}
                     </span>
                   ) : (
-                    <span className="text-sm text-slate-400">
-                      Select status
-                    </span>
+                    <span className="text-sm text-slate-400">Select status</span>
                   )}
                 </SelectTrigger>
                 <SelectContent>
                   {Object.values(IsActive).map((s) => (
                     <SelectItem key={s} value={s}>
                       <span className="flex items-center gap-2">
-                        <span
-                          className={`h-2 w-2 rounded-full inline-block ${STATUS_META[s].dot}`}
-                        />
+                        <span className={`h-2 w-2 rounded-full inline-block ${STATUS_META[s].dot}`} />
                         {STATUS_META[s].label}
                       </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {errors.isActive && (
-                <p className="text-xs text-red-400">
-                  {errors.isActive.message}
-                </p>
-              )}
+              {errors.isActive && <p className="text-xs text-red-400">{errors.isActive.message}</p>}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Compensation */}
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-3">
+              Compensation{" "}
+              <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              <div className="space-y-1.5">
+                <Label htmlFor="ual-salary" className="text-xs font-semibold tracking-widest uppercase">
+                  Monthly Salary (BDT)
+                </Label>
+                <Input id="ual-salary" type="number" min={0} placeholder="e.g. 20000" {...register("salary")} />
+                {errors.salary && <p className="text-xs text-red-400">{errors.salary.message}</p>}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="ual-per-customer" className="text-xs font-semibold tracking-widest uppercase">
+                  Salary Per Customer (BDT)
+                </Label>
+                <Input id="ual-per-customer" type="number" min={0} placeholder="e.g. 300" {...register("salaryPerCustomer")} />
+                {errors.salaryPerCustomer && <p className="text-xs text-red-400">{errors.salaryPerCustomer.message}</p>}
+              </div>
+
             </div>
           </div>
 
@@ -428,29 +497,22 @@ export function UpdateClaimsManagerModal({
           <div>
             <p className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-3">
               Address{" "}
-              <span className="text-[#96999A] normal-case font-normal">
-                (optional)
-              </span>
+              <span className="text-[#96999A] normal-case font-normal">(optional)</span>
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
               {/* Division */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold tracking-widest uppercase">
-                  Division
-                </Label>
+                <Label className="text-xs font-semibold tracking-widest uppercase">Division</Label>
                 <Select value={divisionId} onValueChange={handleDivisionChange}>
                   <SelectTrigger className="w-full">
                     <span className="text-sm">
-                      {divisionId
-                        ? divisions.find((d) => d.id === divisionId)?.name
-                        : "Select Division"}
+                      {divisionId ? divisions.find((d) => d.id === divisionId)?.name : "Select Division"}
                     </span>
                   </SelectTrigger>
                   <SelectContent>
                     {divisions.map((d) => (
-                      <SelectItem key={d.id} value={d.id}>
-                        {d.name}
-                      </SelectItem>
+                      <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -458,27 +520,16 @@ export function UpdateClaimsManagerModal({
 
               {/* District — depends on Division */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold tracking-widest uppercase">
-                  District
-                </Label>
-                <Select
-                  value={districtId}
-                  onValueChange={handleDistrictChange}
-                  disabled={!divisionId}
-                >
+                <Label className="text-xs font-semibold tracking-widest uppercase">District</Label>
+                <Select value={districtId} onValueChange={handleDistrictChange} disabled={!divisionId}>
                   <SelectTrigger className="w-full">
                     <span className="text-sm">
-                      {districtId
-                        ? availableDistricts.find((d) => d.id === districtId)
-                            ?.name
-                        : "Select District"}
+                      {districtId ? availableDistricts.find((d) => d.id === districtId)?.name : "Select District"}
                     </span>
                   </SelectTrigger>
                   <SelectContent>
                     {availableDistricts.map((d) => (
-                      <SelectItem key={d.id} value={d.id}>
-                        {d.name}
-                      </SelectItem>
+                      <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -486,43 +537,63 @@ export function UpdateClaimsManagerModal({
 
               {/* Thana / Upazila — depends on District */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold tracking-widest uppercase">
-                  Thana
-                </Label>
-                <Select
-                  value={thanaId}
-                  onValueChange={handleThanaChange}
-                  disabled={!districtId}
-                >
+                <Label className="text-xs font-semibold tracking-widest uppercase">Thana</Label>
+                <Select value={thanaId} onValueChange={handleThanaChange} disabled={!districtId}>
                   <SelectTrigger className="w-full">
                     <span className="text-sm">
-                      {thanaId
-                        ? availableUpazilas.find((u) => u.id === thanaId)?.name
-                        : "Select Thana"}
+                      {thanaId ? availableUpazilas.find((u) => u.id === thanaId)?.name : "Select Thana"}
                     </span>
                   </SelectTrigger>
                   <SelectContent>
                     {availableUpazilas.map((u) => (
-                      <SelectItem key={u.id} value={u.id}>
-                        {u.name}
-                      </SelectItem>
+                      <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="ucm-street"
-                  className="text-xs font-semibold tracking-widest uppercase"
-                >
-                  Street
+                <Label htmlFor="ua-street" className="text-xs font-semibold tracking-widest uppercase">Street</Label>
+                <Input id="ual-street" placeholder="e.g. Dhaka 1230" {...register("street")} />
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Nominee Information */}
+          <div>
+            <p className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-3">
+              Nominee Information{" "}
+              <span className="text-[#96999A] normal-case font-normal">(optional)</span>
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="ual-nominee-name" className="text-xs font-semibold tracking-widest uppercase">
+                  Nominee Name
                 </Label>
                 <Input
-                  id="ucm-street"
-                  placeholder="e.g. Ward-10"
-                  {...register("street")}
+                  id="ual-nominee-name"
+                  placeholder="e.g. Jane Doe"
+                  {...register("nomineeName")}
                 />
+                {errors.nomineeName && (
+                  <p className="text-xs text-red-400">{errors.nomineeName.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="ual-nominee-phone" className="text-xs font-semibold tracking-widest uppercase">
+                  Nominee Phone Number
+                </Label>
+                <Input
+                  id="ual-nominee-phone"
+                  placeholder="01XXXXXXXXX"
+                  {...register("nomineePhone")}
+                />
+                {errors.nomineePhone && (
+                  <p className="text-xs text-red-400">{errors.nomineePhone.message}</p>
+                )}
               </div>
             </div>
           </div>
@@ -533,17 +604,11 @@ export function UpdateClaimsManagerModal({
           <div className="space-y-1.5">
             <Label className="text-xs font-semibold tracking-widest uppercase">
               Profile Picture{" "}
-              <span className="text-[#96999A] normal-case font-normal">
-                (optional)
-              </span>
+              <span className="text-[#96999A] normal-case font-normal">(optional)</span>
             </Label>
             {imagePreview ? (
               <div className="relative flex items-center gap-3 rounded-md border border-slate-200 dark:border-slate-700 p-2">
-                <Image
-                  width={300}
-                  height={300}
-                  priority
-                  quality={90}
+                <img
                   src={imagePreview}
                   alt="Preview"
                   className="h-14 w-14 rounded-full object-cover shrink-0 border-2 border-slate-200 dark:border-slate-700"
@@ -551,45 +616,29 @@ export function UpdateClaimsManagerModal({
                 <div className="flex-1 min-w-0">
                   {imageFile ? (
                     <>
-                      <p className="text-xs text-slate-500 truncate">
-                        {imageFile.name}
-                      </p>
-                      <p className="text-xs text-slate-400">
-                        {(imageFile.size / 1024).toFixed(1)} KB
-                      </p>
+                      <p className="text-xs text-slate-500 truncate">{imageFile.name}</p>
+                      <p className="text-xs text-slate-400">{(imageFile.size / 1024).toFixed(1)} KB</p>
                     </>
                   ) : (
-                    <p className="text-xs text-slate-400">
-                      Current profile photo
-                    </p>
+                    <p className="text-xs text-slate-400">Current profile photo</p>
                   )}
                 </div>
-                <Button
-                  variant="destructive"
-                  type="button"
-                  size="sm"
-                  onClick={clearImage}
-                  className="shrink-0"
-                >
+                <Button variant="destructive" type="button" size="sm" onClick={clearImage} className="shrink-0">
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             ) : (
               <label
-                htmlFor="update-cm-image"
+                htmlFor="update-al-image"
                 className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 px-4 py-6 cursor-pointer transition-colors"
               >
                 <Upload className="h-6 w-6 text-slate-400" />
                 <div className="text-center">
-                  <p className="text-sm text-slate-500">
-                    Click to upload a new photo
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    PNG, JPG, WEBP — max 2MB
-                  </p>
+                  <p className="text-sm text-slate-500">Click to upload a new photo</p>
+                  <p className="text-xs text-slate-400">PNG, JPG, WEBP — max 2MB</p>
                 </div>
                 <input
-                  id="update-cm-image"
+                  id="update-al-image"
                   type="file"
                   accept="image/png,image/jpeg,image/webp"
                   className="hidden"
@@ -610,16 +659,14 @@ export function UpdateClaimsManagerModal({
               Leave blank to keep the current password
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="ucm-new-password"
-                  className="text-xs font-semibold tracking-widest uppercase"
-                >
+                <Label htmlFor="ual-new-password" className="text-xs font-semibold tracking-widest uppercase">
                   New Password
                 </Label>
                 <div className="relative">
                   <Input
-                    id="ucm-new-password"
+                    id="ual-new-password"
                     type={showNewPassword ? "text" : "password"}
                     placeholder="At least 6 characters"
                     className="pr-10"
@@ -631,30 +678,21 @@ export function UpdateClaimsManagerModal({
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                     tabIndex={-1}
                   >
-                    {showNewPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
                 {errors.newPassword && (
-                  <p className="text-xs text-red-400">
-                    {errors.newPassword.message}
-                  </p>
+                  <p className="text-xs text-red-400">{errors.newPassword.message}</p>
                 )}
               </div>
 
               <div className="space-y-1.5">
-                <Label
-                  htmlFor="ucm-confirm-password"
-                  className="text-xs font-semibold tracking-widest uppercase"
-                >
+                <Label htmlFor="ual-confirm-password" className="text-xs font-semibold tracking-widest uppercase">
                   Confirm New Password
                 </Label>
                 <div className="relative">
                   <Input
-                    id="ucm-confirm-password"
+                    id="ual-confirm-password"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Re-enter new password"
                     className="pr-10"
@@ -666,19 +704,14 @@ export function UpdateClaimsManagerModal({
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                     tabIndex={-1}
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
                 {errors.confirmNewPassword && (
-                  <p className="text-xs text-red-400">
-                    {errors.confirmNewPassword.message}
-                  </p>
+                  <p className="text-xs text-red-400">{errors.confirmNewPassword.message}</p>
                 )}
               </div>
+
             </div>
           </div>
 
@@ -686,7 +719,7 @@ export function UpdateClaimsManagerModal({
           <Button
             type="submit"
             disabled={isLoading}
-            className="group hover:cursor-pointer border-indigo-600 text-white w-full bg-indigo-700 hover:bg-indigo-800 hover:shadow-xl hover:text-white duration-500 dark:text-white mt-2 cursor-pointer font-bold tracking-widest uppercase transition-colors disabled:opacity-60 hover:scale-105 ease-in-out"
+            className="group hover:cursor-pointer border-indigo-600 text-white bg-indigo-700 hover:bg-indigo-800 hover:shadow-xl hover:text-white w-full duration-500 dark:text-white mt-2 cursor-pointer font-bold tracking-widest uppercase transition-colors disabled:opacity-60 hover:scale-105 ease-in-out"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
@@ -695,7 +728,7 @@ export function UpdateClaimsManagerModal({
               </span>
             ) : (
               <span className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4" />
+                <Crown className="h-4 w-4" />
                 Update Claims Manager
               </span>
             )}

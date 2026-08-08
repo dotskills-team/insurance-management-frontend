@@ -51,7 +51,7 @@ export function AgentTable({
     return (
       <div className="rounded-lg border border-border overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 text-white">
+          <thead className="bg-linear-to-r from-indigo-600 via-blue-600 to-cyan-600 text-white">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">
                 Agent
@@ -120,7 +120,7 @@ export function AgentTable({
       <ScrollArea className="w-full whitespace-nowrap">
         <Table className="min-w-[1050px]">
           <TableHeader className="sticky top-0 z-10">
-            <TableRow className="border-none bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-600 hover:bg-transparent">
+            <TableRow className="border-none bg-linear-to-r from-indigo-600 via-blue-600 to-cyan-600 hover:bg-transparent">
               <TableHead className="text-white font-semibold">Agent</TableHead>
 
               <TableHead className="text-white font-semibold">Agent ID</TableHead>
@@ -155,13 +155,13 @@ export function AgentTable({
                   transition-all
                   duration-300
                   hover:shadow-sm
-                  hover:scale-[1.002]
+                 
                   hover:bg-indigo-50
                   dark:hover:bg-indigo-950/20
 
                   ${index % 2 === 0
                       ? "bg-white dark:bg-background"
-                      : "bg-gradient-to-r from-slate-50 to-indigo-50/40 dark:from-slate-950 dark:to-indigo-950/10"
+                      : "bg-linear-to-r from-slate-50 to-indigo-50/40 dark:from-slate-950 dark:to-indigo-950/10"
                     }
 
                 ${STATUS_ROW_ACCENT[status]}
@@ -171,7 +171,7 @@ export function AgentTable({
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={agent.picture} alt={agent.name} />
-                        <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-cyan-500 text-white text-xs font-bold">
+                        <AvatarFallback className="bg-linear-to-br from-indigo-500 to-cyan-500 text-white text-xs font-bold">
                           {agent.name?.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>

@@ -154,15 +154,15 @@ export default function Footer() {
 
         {/* Payment partners — static wrapping grid */}
         <div className="mt-5 sm:mt-14 border-t border-black/5 pt-8 dark:border-white/10">
-          {/* <Image
-            src="/assets/payment/payment-logo.svg"
+        <h3 className="font-semibold text-center">Payment Partner</h3>
+          <Image
+            src="/assets/shurjoPay-logo.webp"
             alt="Payment Gateway Logo"
-            width={620}
-            height={64}
+            width={100}
+            height={10}
             priority
-            className="mx-auto h-auto w-full max-w-350 object-contain"
-          /> */}
-          <h3 className="font-semibold text-center">SurjoPay</h3>
+            className="mx-auto h-auto  object-contain"
+          />
         </div>
 
         {/* Copyright */}

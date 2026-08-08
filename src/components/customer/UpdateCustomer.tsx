@@ -122,8 +122,6 @@ export function UpdateCustomerModal({
         gender: item.gender ?? undefined,
         isActive: item.isActive ?? IsActive.ACTIVE,
         nomineeName: item.nominee?.name ?? "",
-        nomineeAge: item.nominee?.age ?? undefined,
-        nomineeRelationship: item.nominee?.relationship ?? "",
         nomineePhone: item.nominee?.phone ?? "",
         division: item.address?.division ?? "",
         district: item.address?.district ?? "",

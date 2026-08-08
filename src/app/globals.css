@@ -316,21 +316,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   justify-content: center;
 }
 
-/* @media (max-width:600px) {
-  .swiper .swiper-button-prev,
-  .swiper .swiper-button-next {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    background: #fff !important;
-    opacity: 0.5 !important;
-    color: #007A55 !important;
+input[type="date"] {
+  color-scheme: light dark;
+}
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-} */
+input[type="date"]::-webkit-datetime-edit {
+  color: inherit;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
 
 @media (max-width: 600px) {
   .swiper .swiper-button-prev,
