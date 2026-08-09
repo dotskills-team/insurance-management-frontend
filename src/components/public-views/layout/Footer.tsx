@@ -7,7 +7,7 @@ import { FaFacebookF , FaLinkedinIn, FaYoutube  } from "react-icons/fa";
 import { siteConfig } from "@/lib/sideConfig";
 
 const companyLinks = [
-  { label: "Our Product", href: "/product" },
+  { label: "Our Product", href: "/products" },
   { label: "About Us", href: "/about" },
   { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms & Conditions", href: "/terms-of-condition" },
