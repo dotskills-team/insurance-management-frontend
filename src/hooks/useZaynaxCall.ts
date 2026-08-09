@@ -9,7 +9,9 @@ import {
   useUpdateConsultationStatusMutation,
 } from "@/redux/features/consultant/consultant.api";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
+// import { io, Socket } from "socket.io-client";
+import io from "socket.io-client";
+import type SocketIOClient from "socket.io-client";
 
 
 declare global {
@@ -77,7 +79,8 @@ export function useZaynaxCall(jitsiContainerId: string) {
   // call back on.
   const { data: activeRes } = useGetActiveConsultationQuery();
 
-  const socketRef = useRef<Socket | null>(null);
+  // const socketRef = useRef<SocketIOClient.Socket | null>(null);
+  const socketRef = useRef<ReturnType<typeof io> | null>(null);
   const stageRef = useRef<CallStage>("idle");
   const ringTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionRef = useRef<{ consultationId: string; roomId: string; orderID: string } | null>(null);
@@ -134,39 +137,40 @@ export function useZaynaxCall(jitsiContainerId: string) {
 
   // Actual Jitsi iframe creation. Only ever called from the effect once
   // the container element is confirmed to exist.
-   const createJitsiInstance = useCallback(
-  (roomId: string, containerEl: HTMLElement) => {
-    if (!window.JitsiMeetExternalAPI) {
-      setErrorMessage("Video call could not load, please refresh and try again.");
-      setStageBoth("error");
-      return;
-    }
+  const createJitsiInstance = useCallback(
+    (roomId: string, containerEl: HTMLElement) => {
+      if (!window.JitsiMeetExternalAPI) {
+        setErrorMessage("Video call could not load, please refresh and try again.");
+        setStageBoth("error");
+        return;
+      }
 
-    const api = new window.JitsiMeetExternalAPI("meet.zaynax.health", {
-      roomName: roomId,
-      parentNode: containerEl,
-      width: "100%",
-      height: "100%",
-    });
-    jitsiApiRef.current = api;
-    setStageBoth("in-call");
-
-    const handleCallEnded = () => {
-      log("Jitsi reported call ended (videoConferenceLeft/readyToClose)");
-      reportStatus(ConsultationStatus.COMPLETED, {
-        callEndedAt: new Date().toISOString(),
+      const api = new window.JitsiMeetExternalAPI("meet.zaynaxhealth.com", {
+        // const api = new window.JitsiMeetExternalAPI("meet.zaynax.health", {
+        roomName: roomId,
+        parentNode: containerEl,
+        width: "100%",
+        height: "100%",
       });
-      cleanupSocket("jitsi call ended");
-      setStageBoth("ended");
-      api.dispose();
-      jitsiApiRef.current = null;
-    };
+      jitsiApiRef.current = api;
+      setStageBoth("in-call");
 
-    api.addEventListener("videoConferenceLeft", handleCallEnded);
-    api.addEventListener("readyToClose", handleCallEnded);
-  },
-  [setStageBoth, reportStatus, cleanupSocket],
-);
+      const handleCallEnded = () => {
+        log("Jitsi reported call ended (videoConferenceLeft/readyToClose)");
+        reportStatus(ConsultationStatus.COMPLETED, {
+          callEndedAt: new Date().toISOString(),
+        });
+        cleanupSocket("jitsi call ended");
+        setStageBoth("ended");
+        api.dispose();
+        jitsiApiRef.current = null;
+      };
+
+      api.addEventListener("videoConferenceLeft", handleCallEnded);
+      api.addEventListener("readyToClose", handleCallEnded);
+    },
+    [setStageBoth, reportStatus, cleanupSocket],
+  );
 
   // Waits (polls via rAF) for the container element to exist in the DOM,
   // then creates the Jitsi instance. Bails out with an error after
@@ -212,11 +216,14 @@ export function useZaynaxCall(jitsiContainerId: string) {
   // (outgoing call, and listen-only reconnect). roomId/orderID are closed
   // over so DOCTOR_CALL_ACCEPTED/REJECTED join/report against the right call.
   const registerListeners = useCallback(
-    (socket: Socket, roomId: string, orderID: string) => {
-      socket.on("disconnect", (reason) => log("❌ socket disconnected. reason:", reason));
-      socket.on("reconnect", (attempt) => log("🔄 socket reconnected after", attempt, "attempt(s)"));
-      socket.on("reconnect_attempt", (attempt) => log("🔁 reconnect_attempt #", attempt));
-      socket.on("error", (err) => log("⚠️ socket error event:", err));
+    // (socket: SocketIOClient.Socket, roomId: string, orderID: string) => {
+    (socket: ReturnType<typeof io>,
+      roomId: string,
+      orderID: string) => {
+      socket.on("disconnect", (reason: any) => log("❌ socket disconnected. reason:", reason));
+      socket.on("reconnect", (attempt: any) => log("🔄 socket reconnected after", attempt, "attempt(s)"));
+      socket.on("reconnect_attempt", (attempt: any) => log("🔁 reconnect_attempt #", attempt));
+      socket.on("error", (err: any) => log("⚠️ socket error event:", err));
 
       socket.on("INCOMING_CALL_FROM_DOCTOR", (payload: any) => {
         // Zaynax wraps this in a `data` key — unwrap so incomingCall in
@@ -287,7 +294,7 @@ export function useZaynaxCall(jitsiContainerId: string) {
         log("✅ (listener) socket connected. id:", socket.id);
       });
 
-      socket.on("connect_error", (err) => {
+      socket.on("connect_error", (err: any) => {
         log("(listener) connect_error:", err.message);
       });
     },
@@ -296,26 +303,26 @@ export function useZaynaxCall(jitsiContainerId: string) {
 
 
 
-useEffect(() => {
-  const handlePageHide = () => {
-    const s = sessionRef.current;
-    if (!s || stageRef.current !== "in-call") return;
+  useEffect(() => {
+    const handlePageHide = () => {
+      const s = sessionRef.current;
+      if (!s || stageRef.current !== "in-call") return;
 
-    const payload = JSON.stringify({
-      id: s.consultationId,
-      status: ConsultationStatus.COMPLETED,
-      callEndedAt: new Date().toISOString(),
-    });
+      const payload = JSON.stringify({
+        id: s.consultationId,
+        status: ConsultationStatus.COMPLETED,
+        callEndedAt: new Date().toISOString(),
+      });
 
-    navigator.sendBeacon?.(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/consultations/beacon-status`,
-      new Blob([payload], { type: "application/json" }),
-    );
-  };
+      navigator.sendBeacon?.(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/consultations/beacon-status`,
+        new Blob([payload], { type: "application/json" }),
+      );
+    };
 
-  window.addEventListener("pagehide", handlePageHide);
-  return () => window.removeEventListener("pagehide", handlePageHide);
-}, []);
+    window.addEventListener("pagehide", handlePageHide);
+    return () => window.removeEventListener("pagehide", handlePageHide);
+  }, []);
 
   // Runs once an active-consultation check comes back — if there's
   // something to listen for, connect. No-ops otherwise.
@@ -375,7 +382,7 @@ useEffect(() => {
         }, RING_TIMEOUT_MS);
       });
 
-      socket.on("connect_error", (err) => {
+      socket.on("connect_error", (err: any) => {
         log("connect_error:", err.message);
         setErrorMessage("Could not connect to the doctor call service.");
         setStageBoth("error");
