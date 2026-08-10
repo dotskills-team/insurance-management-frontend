@@ -9,10 +9,7 @@ import {
   useUpdateConsultationStatusMutation,
 } from "@/redux/features/consultant/consultant.api";
 import { useCallback, useEffect, useRef, useState } from "react";
-// import { io, Socket } from "socket.io-client";
 import io from "socket.io-client";
-import type SocketIOClient from "socket.io-client";
-
 
 declare global {
   interface Window {

@@ -8,19 +8,10 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 
-// const partners = [
-//   { id: 1, name: "ShopUp", logo: "/assets/Shopup.webp" },
-//   { id: 2, name: "ShareTrip", logo: "/assets/Sharetrip.webp" },
-//   { id: 3, name: "Grameenphone", logo: "/assets/GP.webp" },
-//   { id: 4, name: "bKash", logo: "/assets/Bkash.webp" },
-//   { id: 5, name: "Brac Health Care", logo: "/assets/Brac.webp" },
-// ];
-
-
 const partners = [
   { id: 1, name: "Zaynax", logo: "/assets/zaynax-logo.svg" },
   { id: 2, name: "Shurjopay", logo: "/assets/shurjoPay-logo.webp" },
-  { id: 3, name: "Protective", logo: "/assets/protective.png" },
+  { id: 3, name: "Protective", logo: "/assets/protective-logo-1.png" },
 ];
 
 export default function TrustedPartnersSection() {
@@ -74,7 +65,10 @@ export default function TrustedPartnersSection() {
                       alt={partner.name}
                       fill
                       sizes="200px"
-                      className="object-contain dark:brightness-0 dark:invert"
+                      className={`object-contain ${partner.name === "Protective"
+                          ? "scale-[1.8]"
+                          : ""
+                        } dark:brightness-0 dark:invert`}
                     />
                   </div>
                 </div>
