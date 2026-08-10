@@ -56,7 +56,7 @@ export default function TrustedPartnersSection() {
             {partners.map((partner) => (
               <CarouselItem
                 key={partner.id}
-                className="basis-1/2 pl-6 sm:basis-1/3"
+                className="basis-full pl-6 sm:basis-1/3"
               >
                 <div className="flex h-20 items-center justify-center rounded-2xl border border-black/5 bg-white px-6 shadow-sm dark:border-white/10 dark:bg-neutral-900 sm:h-24">
                   <div className="relative h-10 w-full sm:h-12">
@@ -68,7 +68,7 @@ export default function TrustedPartnersSection() {
                       className={`object-contain ${partner.name === "Protective"
                           ? "scale-[1.8]"
                           : ""
-                        } dark:brightness-0 dark:invert`}
+                        } `}
                     />
                   </div>
                 </div>
