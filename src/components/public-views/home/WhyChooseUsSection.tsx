@@ -98,10 +98,6 @@ export default function WhyChooseBenefitsSection() {
           <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
             Why Choose Surokkha?
           </h2>
-          <p className="mt-3 text-sm font-medium text-[#00E0AE] sm:text-base">
-            11+ Years of delivering affordable healthcare solutions in
-            Bangladesh
-          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
