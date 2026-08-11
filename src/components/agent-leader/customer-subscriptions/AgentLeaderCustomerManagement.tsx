@@ -483,7 +483,7 @@ export default function AgentLeaderCustomerManagement() {
             <Link href="/agent-leader/dashboard/customers/trash">
               <Button
                 variant="default"
-                className="group hover:cursor-pointer border-rose-600 text-white bg-rose-700 hover:bg-rose-800 hover:shadow-xl hover:text-white duration-500 dark:text-white mt-2 cursor-pointer font-bold tracking-widest uppercase transition-colors disabled:opacity-60 hover:scale-105 transition-transform ease-in-out flex gap-2 items-center"
+                className="group hover:cursor-pointer border-rose-600 text-white bg-rose-700 hover:bg-rose-800 hover:shadow-xl hover:text-white duration-500 dark:text-white mt-2 cursor-pointer font-bold tracking-widest uppercase transition-all disabled:opacity-60 hover:scale-105 ease-in-out flex gap-2 items-center"
               >
                 <Trash2 className="h-4 w-4" />
                 <span>Trash</span>
@@ -866,7 +866,7 @@ export default function AgentLeaderCustomerManagement() {
                               >
                                 <Edit2 className="w-3.5 h-3.5" />
                               </Button> */}
-                              <Button
+                              {/* <Button
                                 variant="destructive"
                                 size="icon"
                                 className="h-8 w-8 transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 active:scale-95"
@@ -874,7 +874,7 @@ export default function AgentLeaderCustomerManagement() {
                                 onClick={() => openDeleteDialog(customer)}
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
-                              </Button>
+                              </Button> */}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -951,7 +951,7 @@ export default function AgentLeaderCustomerManagement() {
                     onViewDetails={openDetailsDialog}
                     onViewSubscriptions={openSubscriptionsDialog}
                     onEdit={openEditDialog}
-                    onDelete={openDeleteDialog}
+                    // onDelete={openDeleteDialog}
                   />
                 ))}
               </div>
