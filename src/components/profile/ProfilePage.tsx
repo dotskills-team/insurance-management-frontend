@@ -28,7 +28,9 @@ export default function ProfilePage() {
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
   const [openSetPasswordModal, setOpenSetPasswordModal] = useState(false);
 
-  console.log("user ", user)
+  const userRole = user?.role;
+  const canEditProfile = userRole === "ADMIN" || userRole === "SUPER_ADMIN";
+  console.log("user ", canEditProfile)
 
   if (isLoading) {
     return (
@@ -88,14 +90,17 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex gap-2 shrink-0">
-              <Button
-                variant="outline"
-                onClick={() => setOpenModal(true)}
-                className="group hover:cursor-pointer bg-transparent dark:hover:bg-white dark:bg-gray-100 dark:text-indigo-500 dark:hover:text-indigo-700 dark:hover:border-indigo-700 dark:border-indigo-400 hover:border-indigo-600 text-white hover:bg-indigo-800 hover:shadow-xl hover:text-white duration-500 mt-2 cursor-pointer font-bold tracking-widest uppercase transform disabled:opacity-60 hover:scale-105 transition-transform ease-in-out flex gap-2 items-center"
-              >
-                <Pencil className="h-4 w-4" />
-                Edit Profile
-              </Button>
+              {
+                canEditProfile &&
+                <Button
+                  variant="outline"
+                  onClick={() => setOpenModal(true)}
+                  className="group hover:cursor-pointer bg-transparent dark:hover:bg-white dark:bg-gray-100 dark:text-indigo-500 dark:hover:text-indigo-700 dark:hover:border-indigo-700 dark:border-indigo-400 hover:border-indigo-600 text-white hover:bg-indigo-800 hover:shadow-xl hover:text-white duration-500 mt-2 cursor-pointer font-bold tracking-widest uppercase transform disabled:opacity-60 hover:scale-105 transition-transform ease-in-out flex gap-2 items-center"
+                >
+                  <Pencil className="h-4 w-4" />
+                  Edit Profile
+                </Button>
+              }
               {/* <Button
                 variant="outline"
                 onClick={() => setOpenPasswordModal(true)}

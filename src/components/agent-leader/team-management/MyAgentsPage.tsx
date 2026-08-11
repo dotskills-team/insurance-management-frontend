@@ -181,7 +181,7 @@ export function MyAgentsPage() {
           <Trash2 className="h-4 w-4 group-hover:rotate-6 transition-transform duration-300" />
           Trash
         </Button>
-        <CreateAgentModal onSuccess={refetch} />
+        {/* <CreateAgentModal onSuccess={refetch} /> */}
       </div>
 
       {/* Stats Cards */}
