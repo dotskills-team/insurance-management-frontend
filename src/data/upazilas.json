@@ -497,7 +497,357 @@
 {"id":"492","district_id":"9","name":"Eidgaon","bn_name":"ঈদগাঁও","url":"null"},
 {"id":"493","district_id":"39","name":"Madhyanagar","bn_name":"মধ্যনগর","url":"null"},
 {"id":"494","district_id":"50","name":"Dasar","bn_name":"ডাসার","url":"null"},
-{"id":"495","district_id":"47","name":"Dhaka Metro","bn_name":"ঢাকা মেট্রো","url":"null"}
+
+{
+    "id": "496",
+    "district_id": "65",
+    "name": "Adabor",
+    "bn_name": "আদাবর",
+    "url": "null"
+  },
+  {
+    "id": "497",
+    "district_id": "65",
+    "name": "Badda",
+    "bn_name": "বাড্ডা",
+    "url": "null"
+  },
+  {
+    "id": "498",
+    "district_id": "65",
+    "name": "Banani",
+    "bn_name": "বনানী",
+    "url": "null"
+  },
+  {
+    "id": "499",
+    "district_id": "65",
+    "name": "Bangshal",
+    "bn_name": "বংশাল",
+    "url": "null"
+  },
+  {
+    "id": "500",
+    "district_id": "65",
+    "name": "Bimanbandar",
+    "bn_name": "বিমানবন্দর",
+    "url": "null"
+  },
+  {
+    "id": "501",
+    "district_id": "65",
+    "name": "Cantonment",
+    "bn_name": "ক্যান্টনমেন্ট",
+    "url": "null"
+  },
+  {
+    "id": "502",
+    "district_id": "65",
+    "name": "Chalkbazar",
+    "bn_name": "চকবাজার",
+    "url": "null"
+  },
+  {
+    "id": "503",
+    "district_id": "65",
+    "name": "Dakshinkhan",
+    "bn_name": "দক্ষিণখান",
+    "url": "null"
+  },
+  {
+    "id": "504",
+    "district_id": "65",
+    "name": "Darus-Salam",
+    "bn_name": "দারুস সালাম",
+    "url": "null"
+  },
+  {
+    "id": "505",
+    "district_id": "65",
+    "name": "Demra",
+    "bn_name": "ডেমরা",
+    "url": "null"
+  },
+  {
+    "id": "506",
+    "district_id": "65",
+    "name": "Dhanmondi",
+    "bn_name": "ধানমন্ডি",
+    "url": "null"
+  },
+  {
+    "id": "507",
+    "district_id": "65",
+    "name": "Gandaria",
+    "bn_name": "গেন্ডারিয়া",
+    "url": "null"
+  },
+  {
+    "id": "508",
+    "district_id": "65",
+    "name": "Gulshan",
+    "bn_name": "গুলশান",
+    "url": "null"
+  },
+  {
+    "id": "509",
+    "district_id": "65",
+    "name": "Hazaribag",
+    "bn_name": "হাজারীবাগ",
+    "url": "null"
+  },
+  {
+    "id": "510",
+    "district_id": "65",
+    "name": "Jatrabari",
+    "bn_name": "যাত্রাবাড়ী",
+    "url": "null"
+  },
+  {
+    "id": "511",
+    "district_id": "65",
+    "name": "Kafrul",
+    "bn_name": "কাফরুল",
+    "url": "null"
+  },
+  {
+    "id": "512",
+    "district_id": "65",
+    "name": "Kalabagan",
+    "bn_name": "কলাবাগান",
+    "url": "null"
+  },
+  {
+    "id": "513",
+    "district_id": "65",
+    "name": "Kamrangirchar",
+    "bn_name": "কামরাঙ্গীরচর",
+    "url": "null"
+  },
+  {
+    "id": "514",
+    "district_id": "65",
+    "name": "Khilgaon",
+    "bn_name": "খিলগাঁও",
+    "url": "null"
+  },
+  {
+    "id": "515",
+    "district_id": "65",
+    "name": "Khilkhet",
+    "bn_name": "খিলক্ষেত",
+    "url": "null"
+  },
+  {
+    "id": "516",
+    "district_id": "65",
+    "name": "Kadamtali",
+    "bn_name": "কদমতলী",
+    "url": "null"
+  },
+  {
+    "id": "517",
+    "district_id": "65",
+    "name": "Kotwali",
+    "bn_name": "কোতোয়ালি",
+    "url": "null"
+  },
+  {
+    "id": "518",
+    "district_id": "65",
+    "name": "Lalbagh",
+    "bn_name": "লালবাগ",
+    "url": "null"
+  },
+  {
+    "id": "519",
+    "district_id": "65",
+    "name": "Mirpur Model",
+    "bn_name": "মিরপুর মডেল",
+    "url": "null"
+  },
+  {
+    "id": "520",
+    "district_id": "65",
+    "name": "Mohammadpur",
+    "bn_name": "মোহাম্মদপুর",
+    "url": "null"
+  },
+  {
+    "id": "521",
+    "district_id": "65",
+    "name": "Motijheel",
+    "bn_name": "মতিঝিল",
+    "url": "null"
+  },
+  {
+    "id": "522",
+    "district_id": "65",
+    "name": "Mugda",
+    "bn_name": "মুগদা",
+    "url": "null"
+  },
+  {
+    "id": "523",
+    "district_id": "65",
+    "name": "New Market",
+    "bn_name": "নিউমার্কেট",
+    "url": "null"
+  },
+  {
+    "id": "524",
+    "district_id": "65",
+    "name": "Pallabi",
+    "bn_name": "পল্লবী",
+    "url": "null"
+  },
+  {
+    "id": "525",
+    "district_id": "65",
+    "name": "Paltan Model",
+    "bn_name": "পল্টন মডেল",
+    "url": "null"
+  },
+  {
+    "id": "526",
+    "district_id": "65",
+    "name": "Ramna Model",
+    "bn_name": "রমনা মডেল",
+    "url": "null"
+  },
+  {
+    "id": "527",
+    "district_id": "65",
+    "name": "Rampura",
+    "bn_name": "রামপুরা",
+    "url": "null"
+  },
+  {
+    "id": "528",
+    "district_id": "65",
+    "name": "Rupnagar",
+    "bn_name": "রূপনগর",
+    "url": "null"
+  },
+  {
+    "id": "529",
+    "district_id": "65",
+    "name": "Sabujbag",
+    "bn_name": "সবুজবাগ",
+    "url": "null"
+  },
+  {
+    "id": "530",
+    "district_id": "65",
+    "name": "Shah Ali",
+    "bn_name": "শাহ আলী",
+    "url": "null"
+  },
+  {
+    "id": "531",
+    "district_id": "65",
+    "name": "Shahbagh",
+    "bn_name": "শাহবাগ",
+    "url": "null"
+  },
+  {
+    "id": "532",
+    "district_id": "65",
+    "name": "Shahjahanpur",
+    "bn_name": "শাহজাহানপুর",
+    "url": "null"
+  },
+  {
+    "id": "533",
+    "district_id": "65",
+    "name": "Shyampur",
+    "bn_name": "শ্যামপুর",
+    "url": "null"
+  },
+  {
+    "id": "534",
+    "district_id": "65",
+    "name": "Sher-e-Bangla Nagar",
+    "bn_name": "শেরেবাংলা নগর",
+    "url": "null"
+  },
+  {
+    "id": "535",
+    "district_id": "65",
+    "name": "Sutrapur",
+    "bn_name": "সূত্রাপুর",
+    "url": "null"
+  },
+  {
+    "id": "536",
+    "district_id": "65",
+    "name": "Tejgaon",
+    "bn_name": "তেজগাঁও",
+    "url": "null"
+  },
+  {
+    "id": "537",
+    "district_id": "65",
+    "name": "Tejgaon Industrial",
+    "bn_name": "তেজগাঁও শিল্পাঞ্চল",
+    "url": "null"
+  },
+  {
+    "id": "538",
+    "district_id": "65",
+    "name": "Turag",
+    "bn_name": "তুরাগ",
+    "url": "null"
+  },
+  {
+    "id": "539",
+    "district_id": "65",
+    "name": "Uttara East",
+    "bn_name": "উত্তরা পূর্ব",
+    "url": "null"
+  },
+  {
+    "id": "540",
+    "district_id": "65",
+    "name": "Uttara West",
+    "bn_name": "উত্তরা পশ্চিম",
+    "url": "null"
+  },
+  {
+    "id": "541",
+    "district_id": "65",
+    "name": "Uttarkhan",
+    "bn_name": "উত্তরখান",
+    "url": "null"
+  },
+  {
+    "id": "542",
+    "district_id": "65",
+    "name": "Bhashantek",
+    "bn_name": "ভাষানটেক",
+    "url": "null"
+  },
+  {
+    "id": "543",
+    "district_id": "65",
+    "name": "Vatara",
+    "bn_name": "ভাটারা",
+    "url": "null"
+  },
+  {
+    "id": "544",
+    "district_id": "65",
+    "name": "Wari",
+    "bn_name": "ওয়ারী",
+    "url": "null"
+  },
+  {
+    "id": "545",
+    "district_id": "65",
+    "name": "Airport",
+    "bn_name": "এয়ারপোর্ট",
+    "url": "null"
+  }
 ]
 }
 ]
