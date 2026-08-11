@@ -23,7 +23,7 @@ interface AgentTableProps {
   onViewCustomers?: (agentId: string) => void;
   onEdit?: (agentId: string) => void;
   onToggleBlock?: (agentId: string, isBlocked: boolean) => void;
-  onDelete: (agentId: string) => void;
+  // onDelete: (agentId: string) => void;
 }
 
 // ── status → left-accent + subtle row tint, brand-consistent (emerald/blue palette) ──
@@ -44,7 +44,7 @@ export function AgentTable({
   onViewDetails,
   // onViewCustomers,
   // onEdit,
-  onDelete,
+  // onDelete,
 }: AgentTableProps) {
   // const router = useRouter();
   if (isLoading) {
@@ -230,7 +230,7 @@ export function AgentTable({
                       //     agent.isActive ?? IsActive.BLOCKED,
                       //   )
                       // }
-                      onDelete={() => onDelete(agent._id as string)}
+                      // onDelete={() => onDelete(agent._id as string)}
                     />
                   </TableCell>
                 </TableRow>

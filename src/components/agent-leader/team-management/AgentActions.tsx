@@ -19,7 +19,7 @@ interface AgentActionsProps {
   onViewCustomers?: () => void;
   onEdit?: () => void;
   onToggleBlock?: () => void;
-  onDelete: () => void;
+  // onDelete: () => void;
 }
 
 export function AgentActions({
@@ -28,7 +28,7 @@ export function AgentActions({
   // onViewCustomers,
   // onEdit,
   // onToggleBlock,
-  onDelete,
+  // onDelete,
 }: AgentActionsProps) {
   // const isBlocked = agentStatus === IsActive.BLOCKED;
 
@@ -71,15 +71,15 @@ export function AgentActions({
           )}
         </DropdownMenuItem> */}
 
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator /> */}
 
-        <DropdownMenuItem
+        {/* <DropdownMenuItem
           onClick={onDelete}
           className="gap-2 cursor-pointer text-destructive focus:text-destructive"
         >
           <Trash2 className="w-4 h-4" />
           Delete
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -218,10 +218,10 @@ export function MyAgentsPage() {
                 if (agent) handleEdit(agent);
               }}
               onToggleBlock={handleToggleBlock}
-              onDelete={(agentId) => {
-                const agent = data.data.find((a) => a._id === agentId);
-                if (agent) handleDeleteClick(agentId, agent.name);
-              }}
+              // onDelete={(agentId) => {
+              //   const agent = data.data.find((a) => a._id === agentId);
+              //   if (agent) handleDeleteClick(agentId, agent.name);
+              // }}
             />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
