@@ -117,7 +117,7 @@ export function AgentCard({ agent, onViewDetails, onDelete }: AgentCardProps) {
         >
           <Eye className="w-3.5 h-3.5" />
         </Button>
-        <Button
+        {/* <Button
           variant="destructive"
           size="icon"
           className="h-8 w-8 ml-auto transition-all duration-200 hover:shadow-sm hover:-translate-y-0.5 active:scale-95"
@@ -125,7 +125,7 @@ export function AgentCard({ agent, onViewDetails, onDelete }: AgentCardProps) {
           onClick={() => onDelete(agent._id as string)}
         >
           <Trash2 className="w-3.5 h-3.5" />
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
