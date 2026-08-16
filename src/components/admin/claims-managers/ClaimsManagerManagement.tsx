@@ -382,12 +382,12 @@ export default function ClaimsManagerManagement() {
     if (!deletingManager?._id) return;
     try {
       await deleteUser(String(deletingManager._id)).unwrap();
-      toast.success("Claims Manager deleted successfully");
+      toast.success("CS & Claim Executive deleted successfully");
       setIsDeleteOpen(false);
       setDeletingManager(null);
       refetch();
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to delete Claims Manager");
+      toast.error(err?.data?.message || "Failed to delete CS & Claim Executive");
     }
   };
 
@@ -421,11 +421,11 @@ export default function ClaimsManagerManagement() {
     <div className="space-y-6">
       {/* Page Header */}
       <PageHeader
-        title="Claims Manager Management"
-        description="Manage all claims managers and monitor their activity"
+        title="CS & Claim Executive Management"
+        description="Manage all CS & Claim Executives and monitor their activity"
         breadcrumbs={[
           { label: "Dashboard", href: "/dashboard" },
-          { label: "Claims Manager Management" },
+          { label: "CS & Claim Executive Management" },
         ]}
         action={
           <div className="flex items-center gap-2">

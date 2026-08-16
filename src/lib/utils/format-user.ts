@@ -9,7 +9,7 @@ const ROLE_LABELS: Record<Role, string> = {
   [Role.AGENT_LEADER]: "Agent Leader",
   [Role.AGENT]: "Agent",
   [Role.CUSTOMER]: "Customer",
-  [Role.CLAIMS_MANAGER]: "Claims Manager",
+  [Role.CLAIMS_MANAGER]: "CS & Claim Executive",
 };
 
 export function formatRole(role: Role | undefined): string {

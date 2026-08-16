@@ -54,9 +54,9 @@ export default function ClaimManagerOverview() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Claims Manager Dashboard"
+        title="CS & Claim Executive Dashboard"
         description="Review, manage, and resolve customer claim submissions"
-        breadcrumbs={[{ label: "Claims Manager Dashboard" }]}
+        breadcrumbs={[{ label: "CS & Claim Executive Dashboard" }]}
       />
 
       {/* ── Stat Cards ── */}

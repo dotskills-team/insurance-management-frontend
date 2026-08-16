@@ -284,12 +284,12 @@ export function UpdateClaimsManagerModal({ open, onOpenChange, item, onSuccess }
       if (imageFile) formData.append("picture", imageFile);
 
       await updateUser({ id: String(item._id), data: formData }).unwrap();
-      toast.success("Claims Manager updated successfully!");
+      toast.success("CS & Claim Executive updated successfully!");
       handleClose();
       onSuccess?.();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to update claims manager");
+      toast.error(error?.data?.message || "Failed to update CS & Claim Executive");
     }
   };
 
@@ -301,10 +301,10 @@ export function UpdateClaimsManagerModal({ open, onOpenChange, item, onSuccess }
             <Crown className="w-6 h-6 text-white" />
           </div>
           <DialogTitle className="text-xl font-bold tracking-widest uppercase">
-            Edit Claims Manager
+            Edit CS & Claim Executive
           </DialogTitle>
           <DialogDescription className="text-[#96999A] text-sm tracking-wide">
-            Update the claims manager&apos;s information below
+            Update the CS & Claim Executive &apos;s information below
           </DialogDescription>
         </DialogHeader>
 
@@ -729,7 +729,7 @@ export function UpdateClaimsManagerModal({ open, onOpenChange, item, onSuccess }
             ) : (
               <span className="flex items-center gap-2">
                 <Crown className="h-4 w-4" />
-                Update Claims Manager
+                Update CS & Claim Executive
               </span>
             )}
           </Button>

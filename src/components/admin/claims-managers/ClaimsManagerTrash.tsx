@@ -124,12 +124,12 @@ export function ClaimsManagerTrash() {
   return (
     <div>
       <PageHeader
-        title="Claims Manager Trash"
-        description="Restore or permanently remove deleted Claims Managers."
+        title="CS & Claim Executive Trash"
+        description="Restore or permanently remove deleted CS & Claim Executives."
         breadcrumbs={[
           { label: "Dashboard", href: "/admin/dashboard" },
           {
-            label: "Claims Manager Management",
+            label: "CS & Claim Executive Management",
             href: "/admin/dashboard/claims-managers",
           },
           { label: "Trash" },
@@ -177,7 +177,7 @@ export function ClaimsManagerTrash() {
         !isLoading && (
           <TrashEmptyState
             hasFilters={hasFilters}
-            title="No deleted Claims Managers found"
+            title="No deleted CS & Claim Executives found"
             onClearFilters={hasFilters ? handleResetFilters : undefined}
             onGoBack={() => router.push("/admin/dashboard/claims-managers")}
           />
@@ -187,7 +187,7 @@ export function ClaimsManagerTrash() {
       <RestoreDialog
         isOpen={restoreDialog.isOpen}
         itemName={restoreDialog.itemName}
-        entityName="Claims Manager"
+        entityName="CS & Claim Executive"
         onConfirm={handleRestoreConfirm}
         onCancel={() => setRestoreDialog(EMPTY_DIALOG)}
         isLoading={isRestoring}

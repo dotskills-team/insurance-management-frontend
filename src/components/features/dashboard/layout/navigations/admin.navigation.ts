@@ -75,7 +75,7 @@ export const adminNavigation: NavGroup[] = [
       },
        {
         id: "claims-managers",
-        label: "Claims Managers",
+        label: "CS & Claim Executives",
         href: "/admin/dashboard/claims-managers",
         icon: PersonStanding,
       },
