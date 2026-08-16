@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
-import ClaimManagerOverview from '@/components/claims-manager/ClaimManagerOverview';
+import ClaimsManagementForClaimManager from '@/components/claims-manager/ClaimsManagerDashboard';
 
 export const metadata: Metadata = {
   title: 'Dashboard | Shurokkha',
   description: 'Welcome to your insurance management dashboard',
 };
 
-export default function DashboardPage() {
+export default function ClaimManagementPage() {
   return (
-    <ClaimManagerOverview />
+    <ClaimsManagementForClaimManager />
   );
 }

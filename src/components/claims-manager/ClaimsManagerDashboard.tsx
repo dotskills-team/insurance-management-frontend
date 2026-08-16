@@ -40,7 +40,7 @@ const STATUS_LABELS: Record<ClaimStatus, string> = {
   [ClaimStatus.ALL]: "All",
 };
 
-export default function ClaimsManagerDashboard() {
+export default function ClaimsManagementForClaimManager() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<ClaimStatus | "all">("all");
   const [startDate, setStartDate] = useState("");

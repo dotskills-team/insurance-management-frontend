@@ -23,15 +23,10 @@ export const claimManagerNavigation: NavGroup[] = [
         href: "/claims-manager/dashboard/claims",
         icon: BaggageClaim,
       },
-    ],
-  },
-  {
-    label: "Account",
-    items: [
       {
-        id: "profile",
-        label: "Profile",
-        href: "/claims-manager/dashboard/profile",
+        id: "Customers",
+        label: "Customers",
+        href: "/claims-manager/dashboard/customers",
         icon: User,
       },
     ],
