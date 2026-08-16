@@ -22,17 +22,24 @@ export default function CallSection() {
           </div>
         </div>
 
-        <Button
+        {/* <Button
           className="shrink-0 rounded-full btn-bg px-8 py-5 sm:py-6 text-sm font-semibold text-white transition-transform duration-200 hover:scale-105 hover:shadow-lg"
-        >
-          <Link
+        > */}
+        {/* <Link
             href={`https://wa.me/${siteConfig.whatsapp}`}
             target="_blank"
             rel="noopener noreferrer"
           >
             Get Call
-          </Link>
-        </Button>
+          </Link> */}
+
+        {/* </Button> */}
+
+        <a href="tel:09639444274">
+          <Button className="shrink-0 rounded-full btn-bg px-8 py-5 sm:py-6 text-sm font-semibold text-white transition-transform duration-200 hover:scale-105 hover:shadow-lg">
+            Get Call
+          </Button>
+        </a>
       </div>
     </div>
   );
