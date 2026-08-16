@@ -162,7 +162,7 @@ export function ClaimsManagerDetailsModal({ open, onOpenChange, item }: Props) {
         {/* Header */}
         <div className="relative bg-linear-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 px-6 pt-8 pb-6 rounded-t-lg">
           <DialogHeader className="sr-only">
-            <DialogTitle>Claims Manager Details</DialogTitle>
+            <DialogTitle>CS & Claim Executive Details</DialogTitle>
             <DialogDescription>Detailed information for {item.name}</DialogDescription>
           </DialogHeader>
 
@@ -198,7 +198,7 @@ export function ClaimsManagerDetailsModal({ open, onOpenChange, item }: Props) {
                   className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800"
                 >
                   <Crown className="w-3 h-3 mr-1" />
-                  Claims Manager
+                  CS & Claim Executive
                 </Badge>
                 {item.isVerified && (
                   <Badge
@@ -329,7 +329,7 @@ export function ClaimsManagerDetailsModal({ open, onOpenChange, item }: Props) {
           <div>
             <SectionTitle>Account Details</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field icon={User} label="Role" value="Claims Manager" />
+              <Field icon={User} label="Role" value="CS & Claim Executive" />
               <Field icon={CalendarDays} label="Joined" value={formatDate(item.createdAt)} />
               <Field
                 icon={LogIn}

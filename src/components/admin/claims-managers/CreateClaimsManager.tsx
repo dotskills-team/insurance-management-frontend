@@ -209,11 +209,11 @@ export function CreateClaimsManagerModal({ onSuccess }: Props) {
       if (imageFile) formData.append("picture", imageFile);
 
       await createUser(formData).unwrap();
-      toast.success("Claims manager created successfully!");
+      toast.success("CS & Claim Executive created successfully!");
       handleClose();
       onSuccess?.();
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to create claims manager");
+      toast.error(error?.data?.message || "Failed to create CS & Claim Executive");
     }
   };
 
@@ -224,7 +224,7 @@ export function CreateClaimsManagerModal({ onSuccess }: Props) {
         className="group hover:cursor-pointer border-indigo-600 text-white bg-indigo-700 hover:bg-indigo-800 hover:shadow-xl hover:text-white duration-500 dark:text-white mt-2 cursor-pointer font-bold tracking-widest uppercase transition-colors disabled:opacity-60 hover:scale-105 ease-in-out"
       >
         <Plus className="h-4 w-4" />
-        Add Claims Managers
+        Add CS & Claim Executive
       </Button>
 
       <Dialog
@@ -240,10 +240,10 @@ export function CreateClaimsManagerModal({ onSuccess }: Props) {
               <ShieldCheck className="w-6 h-6 text-white" />
             </div>
             <DialogTitle className="text-xl font-bold tracking-widest uppercase">
-              Add New Claims Manager
+              Add New CS & Claim Executive
             </DialogTitle>
             <DialogDescription className="text-[#96999A] text-sm tracking-wide">
-              Fill in the Claims manager&apos;s information below
+              Fill in the CS & Claim Executive &apos;s information below
             </DialogDescription>
           </DialogHeader>
 
@@ -665,7 +665,7 @@ export function CreateClaimsManagerModal({ onSuccess }: Props) {
               ) : (
                 <span className="flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4" />
-                  Create  Claims Manager
+                  Create CS & Claim Executive
                 </span>
               )}
             </Button>
