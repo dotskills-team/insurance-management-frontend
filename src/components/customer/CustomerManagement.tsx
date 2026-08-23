@@ -188,6 +188,20 @@ function formatDateTime(iso?: string) {
   });
 }
 
+// ── Age helper ───────────────────────────────────────────────────────────
+function calculateAge(dob?: string | Date): string {
+  if (!dob) return "—";
+  const birthDate = new Date(dob);
+  if (isNaN(birthDate.getTime())) return "—";
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return String(age);
+}
+
 type ExportRow = { customer: IUser; subscription: ISubscription | null };
 
 function escapeCsvField(field: unknown): string {
@@ -250,6 +264,10 @@ function getNomineeDob(sub: ISubscription | null): string {
   return dob ? formatDate(dob as unknown as string) : "—";
 }
 
+function getCustomerAge(c: IUser): string {
+  return calculateAge((c as any).dateOfBirth);
+}
+
 function buildCustomerCsvColumns(
   getAgentName: (c: IUser) => string,
   getLeaderName: (c: IUser) => string,
@@ -260,6 +278,7 @@ function buildCustomerCsvColumns(
     { header: "Phone", accessor: (r: ExportRow) => r.customer.phone ?? "" },
     { header: "Email", accessor: (r: ExportRow) => r.customer.email ?? "" },
     { header: "Gender", accessor: (r: ExportRow) => (r.customer.gender ? GENDER_LABELS[r.customer.gender] : "") },
+    { header: "Age", accessor: (r: ExportRow) => getCustomerAge(r.customer) },
     { header: "NID", accessor: (r: ExportRow) => r.customer.nid ?? "" },
     { header: "Registered By (Agent)", accessor: (r: ExportRow) => getAgentName(r.customer) },
     // { header: "Registered By - Employee ID", accessor: (r: ExportRow) => getAgentEmpId(r.customer) },
