@@ -70,6 +70,7 @@ import {
   useDeleteUserMutation,
   useGetAllAgentsQuery,
   useGetAllAgentLeadersQuery,
+  useGetMeQuery,
 } from "@/redux/features/user/user.api";
 
 import { PageHeader } from "../shared/PageHeader";
@@ -515,6 +516,9 @@ export default function CustomerManagement() {
   const [endDate, setEndDate] = useState("");
   const [page, setPage] = useState(1);
   const limit = 10;
+
+  const {data:loggedInUser} = useGetMeQuery();
+  console.log("User data ", loggedInUser)
 
   // ── sort ──
   const [sortField, setSortField] = useState<SortField | null>(null);
