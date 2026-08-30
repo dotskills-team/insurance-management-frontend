@@ -189,6 +189,14 @@ export interface ICreateSubscriptionPayload {
   };
 }
 
+// export interface IUpdateSubscriptionPayload {
+//   planType?: PlanType;
+//   price?: number;
+//   status?: SubscriptionStatus;
+//   paymentStatus?: PaymentStatus;
+//   startDate?: string;
+//   autoRenew?: boolean;
+// }
 export interface IUpdateSubscriptionPayload {
   planType?: PlanType;
   price?: number;
@@ -196,6 +204,13 @@ export interface IUpdateSubscriptionPayload {
   paymentStatus?: PaymentStatus;
   startDate?: string;
   autoRenew?: boolean;
+  nominee?: {
+    source?: NomineeSource;
+    name: string;
+    phone: string;
+    dateOfBirth?: string;
+    relationship: string;
+  };
 }
 
 export interface ISubscriptionStats {
