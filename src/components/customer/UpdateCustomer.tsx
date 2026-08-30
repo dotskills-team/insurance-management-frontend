@@ -49,13 +49,13 @@ const updateCustomerSchema = z.object({
   gender: z.enum(["MALE", "FEMALE", "OTHER"]).optional(),
   isActive: z.nativeEnum(IsActive),
   // Nominee
-  nomineeName: z.string().optional().or(z.literal("")),
-  nomineeAge: z.preprocess(
-    (val) => (val !== "" && val !== undefined ? Number(val) : undefined),
-    z.number().min(1).optional(),
-  ),
-  nomineeRelationship: z.string().optional().or(z.literal("")),
-  nomineePhone: z.string().optional().or(z.literal("")),
+  // nomineeName: z.string().optional().or(z.literal("")),
+  // nomineeAge: z.preprocess(
+  //   (val) => (val !== "" && val !== undefined ? Number(val) : undefined),
+  //   z.number().min(1).optional(),
+  // ),
+  // nomineeRelationship: z.string().optional().or(z.literal("")),
+  // nomineePhone: z.string().optional().or(z.literal("")),
   // Address
   division: z.string().optional(),
   district: z.string().optional(),
@@ -121,8 +121,8 @@ export function UpdateCustomerModal({
         dateOfBirth: item.dateOfBirth ? item.dateOfBirth.split("T")[0] : "",
         gender: item.gender ?? undefined,
         isActive: item.isActive ?? IsActive.ACTIVE,
-        nomineeName: item.nominee?.name ?? "",
-        nomineePhone: item.nominee?.phone ?? "",
+        // nomineeName: item.nominee?.name ?? "",
+        // nomineePhone: item.nominee?.phone ?? "",
         division: item.address?.division ?? "",
         district: item.address?.district ?? "",
         thana: item.address?.thana ?? "",
@@ -222,12 +222,12 @@ export function UpdateCustomerModal({
           thana: data.thana || "",
           street: data.street || "",
         },
-        nominee: {
-          name: data.nomineeName || "",
-          relationship: data.nomineeRelationship || "",
-          phone: data.nomineePhone || "",
-          ...(data.nomineeAge !== undefined && { age: data.nomineeAge }),
-        },
+        // nominee: {
+        //   name: data.nomineeName || "",
+        //   relationship: data.nomineeRelationship || "",
+        //   phone: data.nomineePhone || "",
+        //   ...(data.nomineeAge !== undefined && { age: data.nomineeAge }),
+        // },
       };
       formData.append("data", JSON.stringify(payload));
       if (imageFile) formData.append("picture", imageFile);
@@ -457,7 +457,7 @@ export function UpdateCustomerModal({
           <Separator />
 
           {/* ── Nominee Information ── */}
-          <div>
+          {/* <div>
             <p className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-3">
               Nominee Information{" "}
               <span className="text-[#96999A] normal-case font-normal">
@@ -528,7 +528,7 @@ export function UpdateCustomerModal({
                 )}
               </div>
             </div>
-          </div>
+          </div> */}
 
           <Separator />
 
