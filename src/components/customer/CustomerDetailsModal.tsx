@@ -248,6 +248,7 @@ export function CustomerDetailsModal({
           <div>
             <SectionTitle>Identity</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Field icon={CreditCard}   label="Customer ID"    value={item.customId} mono />
               <Field icon={CreditCard}   label="NID Number"    value={item.nid} mono />
               <Field icon={CalendarDays} label="Date of Birth" value={formatDate(item.dateOfBirth)} />
               <Field icon={User}         label="Gender"        value={item.gender ? GENDER_LABELS[item.gender] : null} />

@@ -275,6 +275,7 @@ function buildCustomerCsvColumns(
   getAgentEmpId: (c: IUser) => string,
 ) {
   return [
+    { header: "Customer ID", accessor: (r: ExportRow) => r.customer.customId ?? "" },
     { header: "Name", accessor: (r: ExportRow) => r.customer.name ?? "" },
     { header: "Phone", accessor: (r: ExportRow) => r.customer.phone ?? "" },
     { header: "Email", accessor: (r: ExportRow) => r.customer.email ?? "" },
@@ -1180,6 +1181,7 @@ export default function CustomerManagement() {
                   </TableHead>
                   <SortableTh field="name" label="Customer" />
                   <SortableTh field="phone" label="Phone" />
+                  <TableHead className="whitespace-nowrap">Customer ID</TableHead>
                   <SortableTh field="gender" label="Gender" />
                   <TableHead className="whitespace-nowrap">NID</TableHead>
                   <TableHead className="whitespace-nowrap">
@@ -1293,6 +1295,13 @@ ${index % 2 === 0 && !isSelected
                         <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-sm">
                           {customer.phone ?? "—"}
                         </TableCell>
+                          <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-sm">
+                          {customer.customId ?? (
+                            <span className="text-slate-300 dark:text-slate-600 italic text-xs">
+                              —
+                            </span>
+                          )}
+                        </TableCell>
                         <TableCell className="text-slate-600 dark:text-slate-400 text-sm">
                           {customer.gender ? (
                             GENDER_LABELS[customer.gender]
@@ -1309,6 +1318,9 @@ ${index % 2 === 0 && !isSelected
                             </span>
                           )}
                         </TableCell>
+
+
+
                         <TableCell>
                           <span className="inline-flex items-center gap-1.5 text-sm text-slate-700 dark:text-slate-300">
                             <UserCog className="w-3.5 h-3.5 text-slate-400 shrink-0" />

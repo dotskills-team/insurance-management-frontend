@@ -679,6 +679,8 @@ export default function AgentLeaderCustomerManagement() {
 
                     <TableHead className="whitespace-nowrap">NID</TableHead>
 
+                    <TableHead className="whitespace-nowrap">Customer ID</TableHead>
+
                     <TableHead className="whitespace-nowrap">
                       Created By
                     </TableHead>
@@ -803,6 +805,15 @@ export default function AgentLeaderCustomerManagement() {
                               </span>
                             )}
                           </TableCell>
+
+                          <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-sm">
+                            {customer.customId ?? (
+                              <span className="text-slate-300 dark:text-slate-600 italic text-xs">
+                                —
+                              </span>
+                            )}
+                          </TableCell>
+
                           <TableCell>
                             <span className="inline-flex items-center gap-1.5 text-sm text-slate-700 dark:text-slate-300">
                               <UserCog className="w-3.5 h-3.5 text-slate-400 shrink-0" />
