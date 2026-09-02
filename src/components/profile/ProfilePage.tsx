@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import UpdateProfileModal from "./UpdateProfileModal";
 import ChangePasswordModal from "./ChangePasswordModal";
 import SetPasswordModal from "./SetPasswordModal";
-import { BackToDashboardSection } from "../shared/dashboard/BackToDashboardSection";
 
 export default function ProfilePage() {
   const { data, isLoading, isError } = useGetMeQuery();
@@ -101,14 +100,6 @@ export default function ProfilePage() {
                   Edit Profile
                 </Button>
               }
-              {/* <Button
-                variant="outline"
-                onClick={() => setOpenPasswordModal(true)}
-                className="group hover:cursor-pointer bg-transparent dark:hover:bg-white dark:bg-gray-100 dark:text-indigo-500 dark:hover:text-indigo-700 dark:hover:border-indigo-700 dark:border-indigo-400 hover:border-indigo-600 text-white hover:bg-indigo-800 hover:shadow-xl hover:text-white duration-500 mt-2 cursor-pointer font-bold tracking-widest uppercase transform disabled:opacity-60 hover:scale-105 transition-transform ease-in-out flex gap-2 items-center"
-              >
-                <KeyRound className="h-4 w-4" />
-                Password
-              </Button> */}
             </div>
           </div>
         </div>
@@ -129,6 +120,10 @@ export default function ProfilePage() {
                 <SummaryRow icon={<Phone className="h-3.5 w-3.5" />} label="Phone" value={user.phone} />
                 <SummaryRow icon={<Mail className="h-3.5 w-3.5" />} label="Email" value={user.email} />
                 <SummaryRow icon={<IdCard className="h-3.5 w-3.5" />} label="NID" value={user.nid} />
+                {
+                 userRole === "CUSTOMER" &&
+                <SummaryRow icon={<IdCard className="h-3.5 w-3.5" />} label="Customer ID" value={user.customId} />
+                }
               </div>
 
               <div className="pt-2 border-t border-border">

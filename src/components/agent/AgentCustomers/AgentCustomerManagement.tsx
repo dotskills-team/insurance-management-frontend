@@ -585,6 +585,7 @@ export default function AgentCustomerManagement() {
                     <SortableTh field="phone" label="Phone" />
                     <SortableTh field="gender" label="Gender" />
                     <TableHead className="whitespace-nowrap text-white">NID</TableHead>
+                    <TableHead className="whitespace-nowrap text-white">Customer ID</TableHead>
                     <SortableTh field="createdAt" label="Joined" />
                     <TableHead className="whitespace-nowrap text-white">
                       Last Login
@@ -688,6 +689,15 @@ ${
                               </span>
                             )}
                           </TableCell>
+
+                          <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-sm">
+                            {customer.customId ?? (
+                              <span className="text-slate-300 dark:text-slate-600 italic text-xs">
+                                —
+                              </span>
+                            )}
+                          </TableCell>
+
                           <TableCell className="text-slate-500 dark:text-slate-400 text-sm whitespace-nowrap">
                             {formatDate(customer.createdAt)}
                           </TableCell>

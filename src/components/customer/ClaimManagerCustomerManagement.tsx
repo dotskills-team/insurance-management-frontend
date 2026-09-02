@@ -677,6 +677,7 @@ export default function ClaimManagerCustomerManagement() {
                   <SortableTh field="phone" label="Phone" />
                   <SortableTh field="gender" label="Gender" />
                   <TableHead className="whitespace-nowrap">NID</TableHead>
+                  <TableHead className="whitespace-nowrap">Custom ID</TableHead>
                   <TableHead className="whitespace-nowrap">
                     Created By
                   </TableHead>
@@ -778,6 +779,14 @@ ${index % 2 === 0
                         </TableCell>
                         <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-sm">
                           {customer.nid ?? (
+                            <span className="text-slate-300 dark:text-slate-600 italic text-xs">
+                              —
+                            </span>
+                          )}
+                        </TableCell>
+
+                        <TableCell className="text-slate-600 dark:text-slate-400 font-mono text-sm">
+                          {customer.customId ?? (
                             <span className="text-slate-300 dark:text-slate-600 italic text-xs">
                               —
                             </span>
