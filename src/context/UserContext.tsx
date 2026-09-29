@@ -9,7 +9,7 @@ type User = {
   _id: string;
   phone: string;
   name: string;
-  role: "SUPER_ADMIN" | "ADMIN" | "MANAGER" | "AGENT" | "AGENT_LEADER" | "CUSTOMER";
+  role: "SUPER_ADMIN" | "ADMIN" | "MANAGER" | "AGENT" | "AGENT_LEADER" | "CUSTOMER" | "A_A_MANAGER";
 };
 
 type UserContextType = {

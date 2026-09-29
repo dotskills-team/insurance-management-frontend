@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -6,12 +7,43 @@ type PaginationProps = {
   page: number;
   totalPage: number;
   onPageChange: (page: number) => void;
+  siblings?: number; 
+};
+
+const range = (start: number, end: number) =>
+  Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+const getPageNumbers = (
+  page: number,
+  totalPage: number,
+  siblings = 1,
+): (number | "...")[] => {
+  const totalNumbers = siblings * 2 + 5;
+
+  if (totalPage <= totalNumbers) return range(1, totalPage);
+
+  const left = Math.max(page - siblings, 1);
+  const right = Math.min(page + siblings, totalPage);
+
+  const showLeftDots = left > 2;
+  const showRightDots = right < totalPage - 1;
+
+  if (!showLeftDots && showRightDots) {
+    return [...range(1, 3 + siblings * 2), "...", totalPage];
+  }
+
+  if (showLeftDots && !showRightDots) {
+    return [1, "...", ...range(totalPage - (2 + siblings * 2), totalPage)];
+  }
+
+  return [1, "...", ...range(left, right), "...", totalPage];
 };
 
 export function Pagination({
   page,
   totalPage,
   onPageChange,
+  siblings = 1,
 }: PaginationProps) {
   if (totalPage <= 1) return null;
 
@@ -23,11 +55,10 @@ export function Pagination({
     if (page < totalPage) onPageChange(page + 1);
   };
 
-  const pages = Array.from({ length: totalPage }).slice(0, 5);
+  const pages = getPageNumbers(page, totalPage, siblings);
 
   return (
     <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-      
       {/* Info */}
       <p className="text-xs text-slate-500 dark:text-slate-400">
         Page{" "}
@@ -49,18 +80,34 @@ export function Pagination({
         </Button>
 
         <div className="flex items-center gap-1">
-          {pages.map((_, i) => {
-            const pageNum = i + 1;
+          {pages.map((p, i) => {
+            if (p === "...") {
+              return (
+                <span
+                  key={`dots-${i}`}
+                  className="w-9 text-center text-slate-400 select-none"
+                >
+                  …
+                </span>
+              );
+            }
+
+            const isActive = p === page;
 
             return (
               <Button
-                key={pageNum}
+                key={p}
                 size="sm"
-                className={`w-9 ${pageNum === page ? "group hover:cursor-pointer border-indigo-600 text-white bg-indigo-700 hover:bg-indigo-800 hover:shadow-xl hover:text-white duration-500 dark:text-white cursor-pointer font-bold tracking-widest uppercase transition-colors disabled:opacity-60 hover:scale-105 ease-in-out" : ""}`}
-                variant={pageNum === page ? "default" : "outline"}
-                onClick={() => onPageChange(pageNum)}
+                variant={isActive ? "default" : "outline"}
+                onClick={() => onPageChange(p)}
+                aria-current={isActive ? "page" : undefined}
+                className={`min-w-9 px-2 ${
+                  isActive
+                    ? "border-indigo-600 text-white bg-indigo-700 hover:bg-indigo-800 hover:text-white hover:shadow-xl hover:scale-105 duration-500 ease-in-out cursor-pointer font-bold tracking-widest transition-colors"
+                    : ""
+                }`}
               >
-                {pageNum}
+                {p}
               </Button>
             );
           })}
