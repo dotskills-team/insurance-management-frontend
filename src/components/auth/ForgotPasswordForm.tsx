@@ -10,11 +10,13 @@ import { PasswordInput } from './PasswordInput';
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 import { OTPInput } from './OTPInput';
 import { TimerDisplay } from './TimerDisplay';
+import { useSendOtpMutation, useSetForgetPasswordMutation } from '@/redux/features/auth/auth.api';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowRight, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { OTP_SETTINGS } from '@/constants/auth';
+import { useRouter } from 'next/navigation';
 
 interface ForgotPasswordFormProps {
   onSubmit?: (data: ResetPasswordFormData, phone: string) => Promise<void>;
@@ -29,7 +31,10 @@ export function ForgotPasswordForm({ onSubmit, isLoading = false }: ForgotPasswo
   const [showTimer, setShowTimer] = useState(false);
   const [resendDisabled, setResendDisabled] = useState(false);
   const [password, setPassword] = useState('');
-
+  const router = useRouter();
+  const [sendOtp, { isLoading: isSendingOtp }] = useSendOtpMutation();
+  const [setForgetPassword, { isLoading: isResetting }] = useSetForgetPasswordMutation();
+  const [otp, setOtp] = useState('');
   const phoneForm = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
     mode: 'onBlur',
@@ -47,57 +52,58 @@ export function ForgotPasswordForm({ onSubmit, isLoading = false }: ForgotPasswo
 
   const handlePhoneSubmit = async (data: ForgotPasswordFormData) => {
     try {
-      setPhoneNumber(data.phoneNumber);
-      // TODO: Call API to send OTP
-      // await sendOTP(data.phoneNumber);
-      console.log('Send OTP for:', data.phoneNumber);
+      // PhoneInput-e space thakle (0 1234 567890) strip kore pathan
+      const phone = data.phoneNumber.replace(/\s/g, '');
+
+      const res = await sendOtp({ phone }).unwrap();
+
+      // API success hole-i state update korun
+      setPhoneNumber(phone);
       setShowTimer(true);
       setStep('otp');
-      toast.success('OTP sent to your phone number');
-    } catch (error) {
-      console.error('Send OTP error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to send OTP');
+      toast.success(res?.message || 'OTP sent to your phone number');
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to send OTP');
     }
   };
 
-  const handleOTPSubmit = async (data: OTPFormData) => {
-    try {
-      // TODO: Call API to verify OTP
-      // await verifyOTP(phoneNumber, data.otp);
-      console.log('Verify OTP:', data.otp);
-      setStep('password');
-      toast.success('OTP verified successfully');
-    } catch (error) {
-      console.error('Verify OTP error:', error);
-      toast.error(error instanceof Error ? error.message : 'Invalid OTP');
-    }
+  const handleOTPSubmit = (data: OTPFormData) => {
+    setOtp(data.otp);
+    setStep('password');
   };
 
   const handlePasswordSubmit = async (data: ResetPasswordFormData) => {
     try {
-      if (onSubmit) {
-        await onSubmit(data, phoneNumber);
-      } else {
-        console.log('Reset password:', data);
-        toast.success('Password reset successful!');
+      const res = await setForgetPassword({
+        phone: phoneNumber,
+        otp,
+        password: data.newPassword,
+      }).unwrap();
+
+      toast.success(res?.message || 'Password reset successful!');
+      router.push('/login');
+    } catch (error: any) {
+      const message = error?.data?.message || 'Failed to reset password';
+      toast.error(message);
+
+      // OTP bhul/expired hole OTP step-e fire jan
+      if (/otp/i.test(message)) {
+        otpForm.reset();
+        setOtp('');
+        setStep('otp');
       }
-    } catch (error) {
-      console.error('Reset password error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to reset password');
     }
   };
 
   const handleResendOTP = async () => {
     try {
       setResendDisabled(true);
-      // TODO: Call API to resend OTP
-      console.log('Resend OTP for:', phoneNumber);
-      toast.success('OTP resent to your phone number');
+      const res = await sendOtp({ phone: phoneNumber }).unwrap();
+      toast.success(res?.message || 'OTP resent to your phone number');
       setShowTimer(true);
       setTimeout(() => setResendDisabled(false), OTP_SETTINGS.RESEND_DELAY_SECONDS * 1000);
-    } catch (error) {
-      console.error('Resend OTP error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to resend OTP');
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to resend OTP');
       setResendDisabled(false);
     }
   };
@@ -147,7 +153,7 @@ export function ForgotPasswordForm({ onSubmit, isLoading = false }: ForgotPasswo
               Enter Verification Code
             </label>
             <p className="text-xs text-muted-foreground">
-              We&apos;ve sent a 6-digit code to {phoneNumber}
+              We have sent a 6-digit code to {phoneNumber}
             </p>
           </div>
 
@@ -188,10 +194,10 @@ export function ForgotPasswordForm({ onSubmit, isLoading = false }: ForgotPasswo
               {otpForm.formState.isSubmitting || isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Verifying...
+                  Submitting...
                 </>
               ) : (
-                'Verify'
+                'Submit'
               )}
             </Button>
           </div>
@@ -203,7 +209,7 @@ export function ForgotPasswordForm({ onSubmit, isLoading = false }: ForgotPasswo
               disabled={resendDisabled}
               className="text-sm text-primary hover:text-primary/80 disabled:text-muted-foreground disabled:cursor-not-allowed"
             >
-              {resendDisabled ? 'Resend in a moment' : 'Didn&apos;t receive code? Resend'}
+              {resendDisabled ? 'Resend in a moment' : "Didn't receive code? Resend"}
             </button>
           </div>
         </form>
