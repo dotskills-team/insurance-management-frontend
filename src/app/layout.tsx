@@ -6,6 +6,7 @@ import { UserProvider } from "@/context/UserContext";
 import { Toaster } from "sonner";
 
 import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import ReduxProvider from "@/providers/ReduxProvider";
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -60,10 +61,13 @@ export default function RootLayout({
     >
       <body className={`${fontSans.variable} font-sans antialiased`} >
         <UserProvider>
-          <Toaster richColors position="top-right" />
+          <ReduxProvider>
+
+            <Toaster richColors position="top-right" />
             <ThemeProvider>
               <TooltipProvider>{children}</TooltipProvider>
             </ThemeProvider>
+          </ReduxProvider>
         </UserProvider>
       </body>
     </html>

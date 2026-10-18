@@ -112,6 +112,7 @@ export function LoginForm({
 
     try {
       const res = await sendOtp({ phone: otpPhone }).unwrap();
+      console.log("res", res);
       toast.success(res?.message || "OTP sent successfully");
       setOtpSent(true);
       setResendTimer(30);

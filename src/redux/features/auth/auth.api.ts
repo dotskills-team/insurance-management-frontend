@@ -38,6 +38,12 @@ interface ISetPasswordPayload {
   password: string;
 }
 
+interface ISetForgetPasswordPayload {
+  otp: string;
+  phone: string;
+  password: string;
+}
+
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation<IResponse<IRegisterResponse>, IRegister>({
@@ -120,6 +126,17 @@ export const authApi = baseApi.injectEndpoints({
         data: payload,
       }),
     }),
+
+    setForgetPassword: builder.mutation<
+      IChangePasswordResponse,
+      ISetForgetPasswordPayload
+    >({
+      query: (payload) => ({
+        url: "/auth/set-forget-password",
+        method: "POST",
+        data: payload,
+      }),
+    }),
   }),
 });
 
@@ -131,7 +148,7 @@ export const {
   useChangePasswordMutation,
   useAdminChangePasswordMutation,
   useSetPasswordMutation,
-
+  useSetForgetPasswordMutation,
   //otp sent and verification
   useSendOtpMutation,
   useVerifyOtpMutation,
