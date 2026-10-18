@@ -243,7 +243,7 @@ export function CreateAAManagerModal({ onSuccess }: Props) {
               Add New A.A. Manager
             </DialogTitle>
             <DialogDescription className="text-[#96999A] text-sm tracking-wide">
-              Fill in the A.A. manager&apos;s information below
+              Fill in the A.A. managers information below
             </DialogDescription>
           </DialogHeader>
 
