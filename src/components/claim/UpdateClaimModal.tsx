@@ -267,7 +267,7 @@ export function UpdateClaimModal({ open, onOpenChange, item, onSuccess }: Update
 
           {item.attachments && item.attachments.length > 0 && (
             <div>
-              <Label className="text-xs font-semibold tracking-widest uppercase">Current Attachments</Label>
+              <Label className="text-xs font-semibold tracking-widest uppercase">Previously Submitted Documents</Label>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-2">
                 {item.attachments.map((url, idx) => (
                   <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="aspect-square rounded-lg overflow-hidden border border-border block">
@@ -276,7 +276,7 @@ export function UpdateClaimModal({ open, onOpenChange, item, onSuccess }: Update
                 ))}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Existing attachments can&apos;t be removed here — new ones you add below will be appended.
+                Earlier uploads are kept and dated in the claim history. Files you add below are saved as a new dated submission.
               </p>
             </div>
           )}
