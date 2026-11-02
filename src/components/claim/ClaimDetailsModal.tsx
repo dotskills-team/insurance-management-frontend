@@ -7,7 +7,6 @@ import {
   FileText,
   User,
   Calendar,
-  Paperclip,
 } from "lucide-react";
 
 import {
@@ -22,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { IClaim, ClaimStatus } from "@/types/claim.types";
 import { CLAIM_TITLE_LABELS, PAYMENT_METHOD_LABELS } from "@/lib/utils/claim-labels";
+import { ClaimDocumentHistory } from "./ClaimDocumentHistory";
 
 interface ClaimDetailsModalProps {
   open: boolean;
@@ -80,7 +80,7 @@ export function ClaimDetailsModal({
   item,
 }: ClaimDetailsModalProps) {
   const StatusIcon = STATUS_ICONS[item.status];
-
+console.log("claim item:", item)
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-6">
@@ -183,34 +183,8 @@ export function ClaimDetailsModal({
             </div>
           </div>
 
-          {/* ── Attachments ── */}
-          <div>
-            <p className="text-xs font-bold tracking-widest uppercase text-slate-400 mb-2 flex items-center gap-1">
-              <Paperclip className="w-3 h-3" /> Attachments (
-              {item.attachments?.length ?? 0})
-            </p>
-            {item.attachments && item.attachments.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {item.attachments.map((url, idx) => (
-                  <a
-                    key={idx}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-16 h-16 rounded-md overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 hover:opacity-80 transition-opacity"
-                  >
-                    <img
-                      src={url}
-                      alt={`Attachment ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <p className="text-xs text-slate-400 italic">No attachments</p>
-            )}
-          </div>
+          {/* ── Documents (date-wise history) ── */}
+          <ClaimDocumentHistory claim={item} />
 
           {/* ── Review Info (only if reviewed) ── */}
           {item.status !== ClaimStatus.PENDING && (

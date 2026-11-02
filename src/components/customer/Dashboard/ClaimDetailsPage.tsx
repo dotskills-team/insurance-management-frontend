@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Check, Circle, CreditCard, FileText, UploadCloud } from "lucide-react";
+import { Check, Circle, CreditCard, UploadCloud } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +14,7 @@ import {
 import { formatDateTime } from "@/lib/utils/customer-portal-format";
 import { ClaimStatus, IClaim, PaymentMethod } from "@/types/claim.types";
 import { CLAIM_TITLE_LABELS, PAYMENT_METHOD_LABELS } from "@/lib/utils/claim-labels";
+import { ClaimDocumentHistory } from "@/components/claim/ClaimDocumentHistory";
 
 interface ClaimDetailsPageProps {
   id: string;
@@ -114,29 +115,7 @@ function ClaimDetailsContent({ claim }: { claim: IClaim }) {
           )}
 
           <div className="px-5 pb-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-2">
-              Documents
-            </p>
-            {claim.attachments && claim.attachments.length > 0 ? (
-              <div className="flex flex-wrap gap-3">
-                {claim.attachments.map((url: string, i: number) => (
-                  <a
-                    key={i}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 p-3 w-24 hover:border-indigo-300 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 transition-colors duration-200"
-                  >
-                    <FileText className="h-6 w-6 text-indigo-500" />
-                    <span className="text-[10px] text-slate-500 truncate w-full text-center">
-                      Document {i + 1}
-                    </span>
-                  </a>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-slate-400">No documents attached.</p>
-            )}
+            <ClaimDocumentHistory claim={claim} />
           </div>
         </div>
 

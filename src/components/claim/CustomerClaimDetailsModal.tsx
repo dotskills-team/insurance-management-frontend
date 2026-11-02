@@ -6,6 +6,9 @@ import { IClaim } from "@/types/claim.types";
 import { formatDate } from "@/lib/utils/format-subscription";
 import { getClaimSubscriptionLabel } from "@/utils/format-claim";
 import { ClaimStatusBadge } from "./ClaimStatusBadge";
+import { ClaimDocumentHistory } from "./ClaimDocumentHistory";
+import { PAYMENT_METHOD_LABELS } from "@/lib/utils/claim-labels";
+import { PaymentMethod } from "@/types/claim.types";
 
 interface ClaimDetailsModalProps {
   open: boolean;
@@ -41,24 +44,26 @@ export function CustomerClaimDetailsModal({ open, onOpenChange, item }: ClaimDet
             <p className="text-foreground whitespace-pre-wrap">{item.description}</p>
           </div>
 
-          {item.attachments && item.attachments.length > 0 && (
-            <div className="space-y-2">
-              <span className="text-muted-foreground">Attachments</span>
-              <div className="grid grid-cols-3 gap-2">
-                {item.attachments.map((url, idx) => (
-                  <a
-                    key={idx}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="aspect-square rounded-lg overflow-hidden border border-border block"
-                  >
-                    <img src={url} alt={`Attachment ${idx + 1}`} className="w-full h-full object-cover" />
-                  </a>
-                ))}
-              </div>
+          <div className="space-y-2">
+            <span className="text-muted-foreground">Receive Payment</span>
+            <div className="rounded-lg bg-muted/30 p-3 space-y-1">
+              <p className="font-medium text-foreground">{PAYMENT_METHOD_LABELS[item.paymentMethod]}</p>
+              {(item.paymentMethod === PaymentMethod.BKASH || item.paymentMethod === PaymentMethod.NAGAD) && (
+                <p className="text-foreground">Mobile: {item.paymentInfo?.mobileNumber ?? "—"}</p>
+              )}
+              {item.paymentMethod === PaymentMethod.BANK && (
+                <div className="grid grid-cols-2 gap-2 text-foreground">
+                  <span>Bank: {item.paymentInfo?.bankName ?? "—"}</span>
+                  <span>Holder: {item.paymentInfo?.accountName ?? "—"}</span>
+                  <span>Account: {item.paymentInfo?.accountNumber ?? "—"}</span>
+                  <span>Routing: {item.paymentInfo?.routingNumber ?? "—"}</span>
+                  <span className="col-span-2">Branch: {item.paymentInfo?.branchName ?? "—"}</span>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+
+          <ClaimDocumentHistory claim={item} />
 
           {item.adminNote && (
             <div className="space-y-1">
