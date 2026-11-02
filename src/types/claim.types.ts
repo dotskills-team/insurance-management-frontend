@@ -84,6 +84,13 @@ export enum PaymentMethod {
   BANK = "BANK",
 }
 
+export interface IDocumentSubmission {
+  submittedAt: string;
+  submittedBy?: string | { _id: string; name: string; role?: string } | null;
+  action: "CREATED" | "UPDATED";
+  documents: string[];
+}
+
 export interface IClaimPaymentInfo {
   mobileNumber?: string;
   bankName?: string;
@@ -121,6 +128,7 @@ export interface IClaim {
   paymentInfo: IClaimPaymentInfo;
   description: string;
   attachments?: string[];
+  documentSubmissions?: IDocumentSubmission[];
   status: ClaimStatus;
   adminNote?: string;
   reviewedBy?: string | { _id: string; name: string };
