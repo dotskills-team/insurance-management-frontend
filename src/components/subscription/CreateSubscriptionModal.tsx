@@ -2821,10 +2821,25 @@ function SubscribeForBlock({ form }: { form: any }) {
               )}
             </div>
             <div className="space-y-1.5 col-span-2">
-              <Input
-                placeholder="Relationship (e.g. Spouse, Son, Father) *"
-                {...form.register("beneficiaryRelationship")}
-              />
+              <Select
+                value={form.watch("beneficiaryRelationship") ?? ""}
+                onValueChange={(v: string) =>
+                  form.setValue("beneficiaryRelationship", v, {
+                    shouldValidate: true,
+                  })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Relationship *" />
+                </SelectTrigger>
+                <SelectContent>
+                  {NOMINEE_RELATIONSHIP_OPTIONS.map((r) => (
+                    <SelectItem key={r} value={r}>
+                      {r}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {form.formState.errors.beneficiaryRelationship && (
                 <p className="text-xs text-red-500">
                   {form.formState.errors.beneficiaryRelationship.message}

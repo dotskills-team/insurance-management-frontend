@@ -257,7 +257,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Loader2, ShieldCheck, Wallet, CalendarClock, Banknote, Users } from "lucide-react";
+import { Loader2, ShieldCheck, Wallet, CalendarClock, Banknote, Users, UserRound } from "lucide-react";
 
 import {
     Dialog,
@@ -288,9 +288,10 @@ const NOMINEE_RELATIONSHIP_OPTIONS = [
 ] as const;
 
 import { useUpdateSubscriptionMutation } from "@/redux/features/subscription/subscription.api";
-import { ISubscription, SubscriptionStatus, PaymentStatus, PlanType } from "@/types/subscription.types";
+import { ISubscription, SubscriptionStatus, PaymentStatus, PlanType, SubscribeFor } from "@/types/subscription.types";
 
 const NOMINEE_MAX_AGE = 64;
+const BENEFICIARY_MAX_AGE = 64;
 
 const isWithinNomineeMaxAge = (dob?: string): boolean => {
     if (!dob) return true;
@@ -325,6 +326,41 @@ const formSchema = z.object({
         .optional()
         .refine(isWithinNomineeMaxAge, `Nominee age must not exceed ${NOMINEE_MAX_AGE} years`),
     nomineeRelationship: z.string().min(1, "Relationship is required"),
+
+    // who the subscription covers; beneficiary fields apply only to OTHER
+    subscribeFor: z.nativeEnum(SubscribeFor),
+    beneficiaryName: z.string().optional(),
+    beneficiaryPhone: z.string().optional(),
+    beneficiaryDateOfBirth: z.string().optional(),
+    beneficiaryRelationship: z.string().optional(),
+}).superRefine((data, ctx) => {
+    if (data.subscribeFor !== SubscribeFor.OTHER) return;
+
+    if (!data.beneficiaryName?.trim()) {
+        ctx.addIssue({ code: "custom", path: ["beneficiaryName"], message: "Beneficiary name is required" });
+    }
+    if (!data.beneficiaryPhone?.trim() || data.beneficiaryPhone.trim().length !== 11) {
+        ctx.addIssue({ code: "custom", path: ["beneficiaryPhone"], message: "Valid 11-digit phone required" });
+    }
+    if (!data.beneficiaryRelationship?.trim()) {
+        ctx.addIssue({ code: "custom", path: ["beneficiaryRelationship"], message: "Relationship is required" });
+    }
+    if (data.beneficiaryDateOfBirth) {
+        const birth = new Date(data.beneficiaryDateOfBirth);
+        if (!isNaN(birth.getTime())) {
+            const today = new Date();
+            let age = today.getFullYear() - birth.getFullYear();
+            const m = today.getMonth() - birth.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+            if (age < 0 || age > BENEFICIARY_MAX_AGE) {
+                ctx.addIssue({
+                    code: "custom",
+                    path: ["beneficiaryDateOfBirth"],
+                    message: `Beneficiary age must not exceed ${BENEFICIARY_MAX_AGE} years`,
+                });
+            }
+        }
+    }
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -391,6 +427,13 @@ const getDefaultValues = (item: ISubscription): FormValues => ({
     nomineePhone: item.nominee?.phone ?? "",
     nomineeDateOfBirth: item.nominee?.dateOfBirth ?? "",
     nomineeRelationship: item.nominee?.relationship ?? "",
+    subscribeFor: item.subscribeFor ?? SubscribeFor.SELF,
+    beneficiaryName: item.beneficiary?.name ?? "",
+    beneficiaryPhone: item.beneficiary?.phone ?? "",
+    beneficiaryDateOfBirth: item.beneficiary?.dateOfBirth
+        ? String(item.beneficiary.dateOfBirth).slice(0, 10)
+        : "",
+    beneficiaryRelationship: item.beneficiary?.relationship ?? "",
 });
 
 export function UpdateSubscriptionModal({
@@ -421,15 +464,34 @@ export function UpdateSubscriptionModal({
     const status = form.watch("status");
     const paymentStatus = form.watch("paymentStatus");
     const planType = form.watch("planType");
+    const subscribeFor = form.watch("subscribeFor");
+
+    // Joint packages always cover the customer themselves, so the field is locked
+    const isJointSubscription =
+        typeof item.package === "object" && item.package !== null
+            ? !!item.package.isJoint
+            : !!item.joinMember;
 
     const onSubmit = async (values: FormValues) => {
         try {
-            const { nomineeName, nomineePhone, nomineeDateOfBirth, nomineeRelationship, ...rest } = values;
+            const {
+                nomineeName, nomineePhone, nomineeDateOfBirth, nomineeRelationship,
+                beneficiaryName, beneficiaryPhone, beneficiaryDateOfBirth, beneficiaryRelationship,
+                ...rest
+            } = values;
 
             await updateSubscription({
                 id: String(item._id),
                 data: {
                     ...rest,
+                    ...(values.subscribeFor === SubscribeFor.OTHER && {
+                        beneficiary: {
+                            name: (beneficiaryName ?? "").trim(),
+                            phone: (beneficiaryPhone ?? "").trim(),
+                            relationship: (beneficiaryRelationship ?? "").trim(),
+                            ...(beneficiaryDateOfBirth && { dateOfBirth: beneficiaryDateOfBirth }),
+                        },
+                    }),
                     nominee: {
                         // preserve whatever source was already set (e.g. JOIN_MEMBER)
                         ...(item.nominee?.source && { source: item.nominee.source }),
@@ -545,6 +607,78 @@ export function UpdateSubscriptionModal({
                             />
                         </div>
                     </FieldGroup>
+
+                    <Separator />
+
+                    <FieldGroup icon={UserRound} label="Subscribed For">
+                        <Select
+                            value={subscribeFor}
+                            disabled={isJointSubscription}
+                            onValueChange={(v) =>
+                                form.setValue("subscribeFor", v as SubscribeFor, { shouldValidate: true })
+                            }
+                        >
+                            <SelectTrigger className="w-full">
+                                <span>{subscribeFor === SubscribeFor.SELF ? "Self (the customer)" : "Someone else"}</span>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value={SubscribeFor.SELF}>Self (the customer)</SelectItem>
+                                <SelectItem value={SubscribeFor.OTHER}>Someone else</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        {isJointSubscription && (
+                            <p className="text-[11px] text-slate-400">
+                                Joint package subscriptions always cover the customer themselves.
+                            </p>
+                        )}
+                    </FieldGroup>
+
+                    {subscribeFor === SubscribeFor.OTHER && (
+                        <FieldGroup icon={Users} label="Beneficiary Info">
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-1.5 col-span-2">
+                                    <Input placeholder="Beneficiary Name *" {...form.register("beneficiaryName")} />
+                                    {form.formState.errors.beneficiaryName && (
+                                        <p className="text-xs text-red-500">{form.formState.errors.beneficiaryName.message}</p>
+                                    )}
+                                </div>
+                                <div className="space-y-1.5">
+                                    <Input placeholder="Beneficiary Phone *" {...form.register("beneficiaryPhone")} />
+                                    {form.formState.errors.beneficiaryPhone && (
+                                        <p className="text-xs text-red-500">{form.formState.errors.beneficiaryPhone.message}</p>
+                                    )}
+                                </div>
+                                <div className="space-y-1.5">
+                                    <Input type="date" placeholder="Date of Birth" {...form.register("beneficiaryDateOfBirth")} />
+                                    {form.formState.errors.beneficiaryDateOfBirth && (
+                                        <p className="text-xs text-red-500">{form.formState.errors.beneficiaryDateOfBirth.message}</p>
+                                    )}
+                                </div>
+                                <div className="space-y-1.5 col-span-2">
+                                    <Select
+                                        value={form.watch("beneficiaryRelationship") ?? ""}
+                                        onValueChange={(v: string | null) =>
+                                            form.setValue("beneficiaryRelationship", v ?? "", { shouldValidate: true })
+                                        }
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Relationship *" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {NOMINEE_RELATIONSHIP_OPTIONS.map((r) => (
+                                                <SelectItem key={r} value={r}>
+                                                    {r}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {form.formState.errors.beneficiaryRelationship && (
+                                        <p className="text-xs text-red-500">{form.formState.errors.beneficiaryRelationship.message}</p>
+                                    )}
+                                </div>
+                            </div>
+                        </FieldGroup>
+                    )}
 
                     <Separator />
 
