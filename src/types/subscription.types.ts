@@ -204,6 +204,14 @@ export interface IUpdateSubscriptionPayload {
   paymentStatus?: PaymentStatus;
   startDate?: string;
   autoRenew?: boolean;
+  subscribeFor?: SubscribeFor;
+  // required by the server when subscribeFor is OTHER
+  beneficiary?: {
+    name: string;
+    phone: string;
+    dateOfBirth?: string;
+    relationship: string;
+  };
   nominee?: {
     source?: NomineeSource;
     name: string;
