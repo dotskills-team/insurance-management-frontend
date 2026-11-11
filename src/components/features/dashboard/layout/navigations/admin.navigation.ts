@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Package,
+  Power,
   PersonStanding,
   ShieldCheck,
   User,
@@ -129,5 +130,17 @@ export const adminNavigation: NavGroup[] = [
       },
      
     ],
-  }
+  },
+
+  {
+    label: "Settings",
+    items: [
+      {
+        id: "site-setting",
+        label: "Staff Access",
+        href: "/admin/dashboard/site-setting",
+        icon: Power,
+      },
+    ],
+  },
 ];

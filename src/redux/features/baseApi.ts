@@ -32,7 +32,8 @@ export const baseApi = createApi({
     "STORE",
     "STORES",
 
-    "CONTACT","CONTACTS"
+    "CONTACT","CONTACTS",
+    "SITE_SETTING"
   ],
   endpoints: () => ({}),
 });

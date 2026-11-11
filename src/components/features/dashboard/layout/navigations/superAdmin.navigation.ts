@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   Package,
+  Power,
   PersonStanding,
   ShieldCheck,
   User,
@@ -125,6 +126,18 @@ export const superAdminNavigation: NavGroup[] = [
         label: "Payments",
         href: "/admin/dashboard/payments",
         icon: BadgeDollarSign,
+      },
+    ],
+  },
+
+  {
+    label: "Settings",
+    items: [
+      {
+        id: "site-setting",
+        label: "Staff Access",
+        href: "/admin/dashboard/site-setting",
+        icon: Power,
       },
     ],
   },

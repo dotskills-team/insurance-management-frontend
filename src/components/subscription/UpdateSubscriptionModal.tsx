@@ -272,11 +272,36 @@ import {
     SelectContent,
     SelectItem,
     SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
+const NOMINEE_RELATIONSHIP_OPTIONS = [
+    "Husband",
+    "Wife",
+    "Father",
+    "Mother",
+    "Brother",
+    "Sister",
+    "Son",
+    "Daughter",
+] as const;
+
 import { useUpdateSubscriptionMutation } from "@/redux/features/subscription/subscription.api";
 import { ISubscription, SubscriptionStatus, PaymentStatus, PlanType } from "@/types/subscription.types";
+
+const NOMINEE_MAX_AGE = 64;
+
+const isWithinNomineeMaxAge = (dob?: string): boolean => {
+    if (!dob) return true;
+    const birth = new Date(dob);
+    if (isNaN(birth.getTime())) return true;
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    return age >= 0 && age <= NOMINEE_MAX_AGE;
+};
 
 const formSchema = z.object({
     status: z.nativeEnum(SubscriptionStatus),
@@ -295,7 +320,10 @@ const formSchema = z.object({
         .string()
         .min(1, "Nominee phone is required")
         .length(11, "Valid 11-digit phone required"),
-    nomineeDateOfBirth: z.string().optional(),
+    nomineeDateOfBirth: z
+        .string()
+        .optional()
+        .refine(isWithinNomineeMaxAge, `Nominee age must not exceed ${NOMINEE_MAX_AGE} years`),
     nomineeRelationship: z.string().min(1, "Relationship is required"),
 });
 
@@ -544,16 +572,36 @@ export function UpdateSubscriptionModal({
                                     </p>
                                 )}
                             </div>
-                            <Input
-                                type="date"
-                                placeholder="Date of Birth"
-                                {...form.register("nomineeDateOfBirth")}
-                            />
-                            <div className="space-y-1.5 col-span-2">
+                            <div className="space-y-1.5">
                                 <Input
-                                    placeholder="Relationship (e.g. Spouse, Son, Father) *"
-                                    {...form.register("nomineeRelationship")}
+                                    type="date"
+                                    placeholder="Date of Birth"
+                                    {...form.register("nomineeDateOfBirth")}
                                 />
+                                {form.formState.errors.nomineeDateOfBirth && (
+                                    <p className="text-xs text-red-500">
+                                        {form.formState.errors.nomineeDateOfBirth.message}
+                                    </p>
+                                )}
+                            </div>
+                            <div className="space-y-1.5 col-span-2">
+                                <Select
+                                    value={form.watch("nomineeRelationship") ?? ""}
+                                    onValueChange={(v: string | null) =>
+                                        form.setValue("nomineeRelationship", v ?? "", { shouldValidate: true })
+                                    }
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Relationship *" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {NOMINEE_RELATIONSHIP_OPTIONS.map((r) => (
+                                            <SelectItem key={r} value={r}>
+                                                {r}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 {form.formState.errors.nomineeRelationship && (
                                     <p className="text-xs text-red-500">
                                         {form.formState.errors.nomineeRelationship.message}

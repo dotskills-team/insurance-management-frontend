@@ -1600,6 +1600,21 @@ const PLAN_LABELS: Record<PlanType, string> = {
 // options for the Join Member relationship dropdown
 const RELATIONSHIP_OPTIONS = ["Husband", "Wife", "Son", "Daughter"] as const;
 
+// options for the Nominee relationship dropdown
+const NOMINEE_RELATIONSHIP_OPTIONS = [
+  "Husband",
+  "Wife",
+  "Father",
+  "Mother",
+  "Brother",
+  "Sister",
+  "Son",
+  "Daughter",
+] as const;
+
+// maximum allowed age (years) for a beneficiary
+const BENEFICIARY_MAX_AGE = 64;
+
 const formatCurrency = (n?: number) => `৳${(n ?? 0).toLocaleString("en-BD")}`;
 
 const calculateAge = (dob: string): number => {
@@ -1749,6 +1764,16 @@ const schema = z
           message: "Relationship is required",
         });
       }
+      if (data.beneficiaryDateOfBirth?.trim()) {
+        const age = calculateAge(data.beneficiaryDateOfBirth);
+        if (age < 0 || age > BENEFICIARY_MAX_AGE) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["beneficiaryDateOfBirth"],
+            message: `Beneficiary age must not exceed ${BENEFICIARY_MAX_AGE} years`,
+          });
+        }
+      }
     }
 
     // Join Member — required whenever the selected package is Joint
@@ -1776,6 +1801,16 @@ const schema = z
           path: ["joinMemberRelationship"],
           message: "Relationship is required",
         });
+      }
+      if (data.joinMemberDateOfBirth?.trim()) {
+        const age = calculateAge(data.joinMemberDateOfBirth);
+        if (age < 0 || age > BENEFICIARY_MAX_AGE) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["joinMemberDateOfBirth"],
+            message: `Join member age must not exceed ${BENEFICIARY_MAX_AGE} years`,
+          });
+        }
       }
     }
 
@@ -1809,6 +1844,16 @@ const schema = z
           path: ["subscriptionNomineeRelationship"],
           message: "Relationship is required",
         });
+      }
+      if (data.subscriptionNomineeDateOfBirth?.trim()) {
+        const age = calculateAge(data.subscriptionNomineeDateOfBirth);
+        if (age < 0 || age > BENEFICIARY_MAX_AGE) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["subscriptionNomineeDateOfBirth"],
+            message: `Nominee age must not exceed ${BENEFICIARY_MAX_AGE} years`,
+          });
+        }
       }
     }
   });
@@ -2763,11 +2808,18 @@ function SubscribeForBlock({ form }: { form: any }) {
                 </p>
               )}
             </div>
-            <Input
-              type="date"
-              placeholder="Date of Birth"
-              {...form.register("beneficiaryDateOfBirth")}
-            />
+            <div className="space-y-1.5">
+              <Input
+                type="date"
+                placeholder="Date of Birth"
+                {...form.register("beneficiaryDateOfBirth")}
+              />
+              {form.formState.errors.beneficiaryDateOfBirth && (
+                <p className="text-xs text-red-500">
+                  {form.formState.errors.beneficiaryDateOfBirth.message}
+                </p>
+              )}
+            </div>
             <div className="space-y-1.5 col-span-2">
               <Input
                 placeholder="Relationship (e.g. Spouse, Son, Father) *"
@@ -2820,11 +2872,18 @@ function JoinMemberBlock({ form }: { form: any }) {
             </p>
           )}
         </div>
-        <Input
-          type="date"
-          placeholder="Date of Birth"
-          {...form.register("joinMemberDateOfBirth")}
-        />
+        <div className="space-y-1.5">
+          <Input
+            type="date"
+            placeholder="Date of Birth"
+            {...form.register("joinMemberDateOfBirth")}
+          />
+          {form.formState.errors.joinMemberDateOfBirth && (
+            <p className="text-xs text-red-500">
+              {form.formState.errors.joinMemberDateOfBirth.message}
+            </p>
+          )}
+        </div>
         <div className="space-y-1.5 col-span-2">
           <Select
             value={form.watch("joinMemberRelationship") ?? ""}
@@ -2920,16 +2979,38 @@ function NomineeBlock({
               </p>
             )}
           </div>
-          <Input
-            type="date"
-            placeholder="Date of Birth"
-            {...form.register("subscriptionNomineeDateOfBirth")}
-          />
-          <div className="space-y-1.5 col-span-2">
+          <div className="space-y-1.5">
             <Input
-              placeholder="Relationship (e.g. Spouse, Son, Father) *"
-              {...form.register("subscriptionNomineeRelationship")}
+              type="date"
+              placeholder="Date of Birth"
+              {...form.register("subscriptionNomineeDateOfBirth")}
             />
+            {form.formState.errors.subscriptionNomineeDateOfBirth && (
+              <p className="text-xs text-red-500">
+                {form.formState.errors.subscriptionNomineeDateOfBirth.message}
+              </p>
+            )}
+          </div>
+          <div className="space-y-1.5 col-span-2">
+            <Select
+              value={form.watch("subscriptionNomineeRelationship") ?? ""}
+              onValueChange={(v: string) =>
+                form.setValue("subscriptionNomineeRelationship", v, {
+                  shouldValidate: true,
+                })
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Relationship *" />
+              </SelectTrigger>
+              <SelectContent>
+                {NOMINEE_RELATIONSHIP_OPTIONS.map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {r}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {form.formState.errors.subscriptionNomineeRelationship && (
               <p className="text-xs text-red-500">
                 {form.formState.errors.subscriptionNomineeRelationship.message}
