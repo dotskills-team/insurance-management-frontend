@@ -529,7 +529,9 @@ export function PaymentDetailsModal({
                 </div>
                 {item.status === "REFUND_PENDING" && (
                   <p className="text-xs text-orange-600 dark:text-orange-400 mt-3">
-                    Awaiting approval on the SurjoPay merchant portal. Search using the SurjoPay Order ID above.
+                    {item.gateway === "SSLCOMMERZ"
+                      ? "Awaiting confirmation from SSLCommerz. Search using the Refund Ref ID above."
+                      : "Awaiting approval on the SurjoPay merchant portal. Search using the SurjoPay Order ID above."}
                   </p>
                 )}
               </div>

@@ -113,8 +113,11 @@ export function UpdatePaymentModal({
 
   const selectedStatus = watch("status");
 
-  const isSurjoPayPayment = !!item.spOrderId;
-  const isEligibleForRefund = item.status === "PAID" && isSurjoPayPayment;
+  // Older payments have no gateway field -> SurjoPay
+  const isSSLPayment = item.gateway === "SSLCOMMERZ";
+  const gatewayLabel = isSSLPayment ? "SSLCommerz" : "SurjoPay";
+  const isEligibleForRefund =
+    item.status === "PAID" && (isSSLPayment || !!item.spOrderId);
   const isRefundPending = item.status === "REFUND_PENDING";
   const isAlreadyRefunded = item.status === "REFUNDED";
 
@@ -135,10 +138,16 @@ export function UpdatePaymentModal({
 
   const handleRequestRefund = async () => {
     try {
-      await requestRefund({ id: item._id, reason: refundReason || undefined }).unwrap();
-      toast.success(
-        "Refund requested. Approve it on the SurjoPay merchant portal — status will update automatically once confirmed."
-      );
+      const res = await requestRefund({ id: item._id, reason: refundReason || undefined }).unwrap();
+      if (res.data?.status === "REFUNDED") {
+        toast.success("Payment refunded successfully!");
+      } else {
+        toast.success(
+          isSSLPayment
+            ? "Refund initiated through SSLCommerz — status will update automatically once confirmed."
+            : "Refund requested. Approve it on the SurjoPay merchant portal — status will update automatically once confirmed."
+        );
+      }
       handleClose();
       onSuccess?.();
     } catch (error: any) {
@@ -187,8 +196,8 @@ export function UpdatePaymentModal({
         {isRefundPending && (
           <div className="rounded-lg border border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/20 p-3 text-sm text-orange-700 dark:text-orange-400">
             A refund has already been requested for this payment and is awaiting
-            approval on the SurjoPay portal. Status will update automatically
-            once confirmed.
+            {isSSLPayment ? " confirmation from SSLCommerz" : " approval on the SurjoPay portal"}.
+            Status will update automatically once confirmed.
           </div>
         )}
         {isAlreadyRefunded && (
@@ -255,19 +264,18 @@ export function UpdatePaymentModal({
           </Button>
         </form>
 
-        {/* ── SurjoPay refund request section ── */}
+        {/* ── Refund request section ── */}
         {isEligibleForRefund && (
           <>
             <Separator />
             <div className="space-y-3">
               <p className="text-xs font-bold tracking-widest uppercase text-slate-400">
-                Refund (SurjoPay)
+                Refund ({gatewayLabel})
               </p>
               <p className="text-xs text-slate-400">
-                SurjoPay has no automated refund API. This will mark the payment
-                as refund-pending — you must then approve the refund manually on
-                the SurjoPay merchant portal. Status updates to Refunded automatically
-                once confirmed.
+                {isSSLPayment
+                  ? "This will send a full refund request to SSLCommerz through its API. The payment may be refunded immediately; otherwise it stays refund-pending and updates to Refunded automatically once confirmed."
+                  : "SurjoPay has no automated refund API. This will mark the payment as refund-pending — you must then approve the refund manually on the SurjoPay merchant portal. Status updates to Refunded automatically once confirmed."}
               </p>
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold tracking-widest uppercase">
